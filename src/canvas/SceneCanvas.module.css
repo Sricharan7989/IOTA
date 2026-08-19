@@ -1,0 +1,18 @@
+/* IOTA — the fixed WebGL layer.
+   Pinned behind the whole document; every DOM section scrolls over it. */
+
+.layer {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-canvas);
+  /* The canvas is decorative and must never eat clicks meant for the DOM
+     layer above it. */
+  pointer-events: none;
+}
+
+/* r3f-perf renders its overlay into the canvas's parent (this element), so it
+   would otherwise inherit `pointer-events: none` and become unclickable. Only
+   applies in dev — the panel isn't in the production bundle at all. */
+.layer > *:not(canvas) {
+  pointer-events: auto;
+}

@@ -1,0 +1,81 @@
+/* IOTA — design tokens.
+   The machine-readable half of DESIGN.md. Every colour, font, size and easing
+   used anywhere in the app resolves to a variable declared here. If a component
+   hardcodes a hex value, that is a bug. */
+
+:root {
+  /* ---------- Palette: base ---------- */
+  --c-black: #05060c; /* page base */
+  --c-surface: #0a0c16; /* raised panels, nav pill */
+  --c-surface-2: #11141f; /* pressed / nested surface */
+
+  /* ---------- Palette: accent ---------- */
+  --c-blue: #5d86ff;
+  --c-violet: #9d7bff;
+  --c-blue-deep: #3a5fd9; /* receding blue, shadow side */
+  --c-violet-deep: #7a57e0; /* receding violet, shadow side */
+  --c-glow: #c7d4ff; /* specular highlight, brightest pixel */
+
+  /* ---------- Palette: text ---------- */
+  --c-text: #edf0ff;
+  --c-text-mute: #9aa3bf; /* secondary copy */
+  --c-text-faint: #5a6180; /* labels, metadata — decorative only */
+
+  /* ---------- Lines & glows ---------- */
+  --c-hairline: rgba(157, 123, 255, 0.16); /* every border in the system */
+  --c-hairline-strong: rgba(157, 123, 255, 0.32); /* hover / focus state */
+  --glow-blue: 0 0 24px rgba(93, 134, 255, 0.35);
+  --glow-violet: 0 0 24px rgba(157, 123, 255, 0.35);
+
+  /* ---------- Signature gradient ---------- */
+  --g-iota: linear-gradient(120deg, var(--c-blue) 0%, var(--c-violet) 100%);
+
+  /* ---------- Type families ---------- */
+  --f-display: 'Chakra Petch', 'Segoe UI', system-ui, sans-serif;
+  --f-body: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --f-mono: 'Space Mono', ui-monospace, 'Cascadia Mono', monospace;
+
+  /* ---------- Type scale (fluid) ---------- */
+  --t-hero: clamp(4rem, 15vw, 11rem);
+  --t-h1: clamp(2.5rem, 6vw, 5rem);
+  --t-h2: clamp(1.75rem, 3vw, 2.75rem);
+  --t-body: clamp(1rem, 1.1vw, 1.125rem);
+  --t-label: 0.75rem;
+
+  /* ---------- Tracking ---------- */
+  --tr-display: -0.02em; /* Chakra Petch is wide; pull it in */
+  --tr-label: 0.22em; /* mono eyebrows are always wide + uppercase */
+
+  /* ---------- Space (8px grid) ---------- */
+  --s-1: 0.25rem;
+  --s-2: 0.5rem;
+  --s-3: 0.75rem;
+  --s-4: 1rem;
+  --s-6: 1.5rem;
+  --s-8: 2rem;
+  --s-12: 3rem;
+  --s-16: 4rem;
+  --s-24: 6rem;
+  --s-32: 8rem;
+
+  /* ---------- Layout ---------- */
+  --gutter: clamp(1.25rem, 5vw, 5rem);
+  --max-w: 1440px;
+  --nav-h: 4.5rem;
+
+  /* ---------- Motion ---------- */
+  --d-fast: 0.25s;
+  --d-base: 0.6s;
+  --d-slow: 1.2s;
+  --d-epic: 2.4s;
+
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1); /* default — expo out */
+  --e-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --e-soft: cubic-bezier(0.33, 1, 0.68, 1);
+
+  /* ---------- Layers ---------- */
+  --z-canvas: 0;
+  --z-content: 1;
+  --z-nav: 10;
+  --z-overlay: 100;
+}
