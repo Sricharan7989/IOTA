@@ -4,12 +4,16 @@
    run one continuous camera journey across the whole page. */
 import { Suspense, lazy } from 'react'
 import { Canvas } from '@react-three/fiber'
+import WarpField from './WarpField'
 import styles from './SceneCanvas.module.css'
 
 // `import.meta.env.DEV` is statically replaced at build time, so in production
-// this collapses to `null` and the dynamic import is dropped by the bundler.
-// That keeps the devDependency out of the shipped graph.
+// these collapse to `null` and the dynamic imports are dropped by the bundler.
+// That keeps r3f-perf (a devDependency) and leva out of the shipped graph.
 const PerfPanel = import.meta.env.DEV ? lazy(() => import('./PerfPanel')) : null
+const WarpFieldTuner = import.meta.env.DEV
+  ? lazy(() => import('./WarpFieldTuner'))
+  : null
 
 export default function SceneCanvas() {
   return (
@@ -28,7 +32,17 @@ export default function SceneCanvas() {
           stencil: false,
         }}
       >
-        {/* Scene contents arrive in Phase 1+. Empty by design for now. */}
+        {/* The permanent background. In dev the tuner wraps it to drive the
+            same component from Leva; in production it mounts bare with the
+            defaults baked into WARP_DEFAULTS. */}
+        {WarpFieldTuner ? (
+          <Suspense fallback={null}>
+            <WarpFieldTuner />
+          </Suspense>
+        ) : (
+          <WarpField />
+        )}
+
         {PerfPanel ? (
           <Suspense fallback={null}>
             <PerfPanel />

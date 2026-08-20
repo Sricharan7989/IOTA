@@ -62,6 +62,7 @@ IOTA/
     ├── App.jsx          composition only: canvas layer + DOM layer
     ├── components/      DOM UI — navbar, cursor, layout chrome
     ├── canvas/          everything inside <Canvas> (R3F / three)
+    │   └── shaders/     .glsl files, imported as strings by vite-plugin-glsl
     ├── sections/        the scroll journey, one file per section
     ├── hooks/           shared behaviour — useScroll, useMouse, …
     └── styles/          tokens.css + global.css
@@ -136,11 +137,13 @@ Written down because it shapes the architecture, starting in Phase 1:
       Scaffold, dependencies, folder structure, fonts, design tokens, global
       reset, docs, and the two-layer base layout: a fixed transparent canvas
       with the perf HUD, and a DOM layer holding `IOTA // BOOT`.
-- [ ] **Phase 1 — Scroll system & shell**
-      Lenis + GSAP ScrollTrigger, the mutable frame-state store, navbar with
-      scroll-spy, custom cursor, section stubs.
-- [ ] **Phase 2 — Particle warp background**
-      GPU particle field, scroll-velocity stretch, cursor flow, depth fade.
+- [x] **Phase 1 — Particle warp background** _(complete)_
+      100k-particle GPU warp in one draw call, cursor repulsion, hold-to-boost,
+      a temporary wheel-driven scroll hook, and a dev-only Leva tuner.
+- [ ] **Phase 2 — Scroll system & shell**
+      Lenis + GSAP ScrollTrigger, navbar with scroll-spy, custom cursor,
+      section stubs. **Also: replace `useScrollBoost` with Lenis velocity** —
+      see the note in that file.
 - [ ] **Phase 3 — The shader blob**
       Custom glass/iridescent centerpiece and its scroll choreography.
 - [ ] **Phase 4 — Scroll storytelling**
@@ -161,8 +164,7 @@ kickoff. Phase 0 is the only one that is settled.
   shader blob, not a mesh. Decide whether it becomes a secondary object (a logo
   token, a Team-section prop) or gets deleted. At 4.6 MB it needs Draco or
   meshopt compression before it ships either way.
-- `vite-plugin-glsl` is installed and configured, ahead of the shader work in
-  Phases 2–3. It wasn't on the Phase 0 dependency list — drop it if you'd rather
-  add it when it's actually needed.
+- ~~`vite-plugin-glsl` is installed ahead of the shader work.~~ **Resolved** —
+  in active use as of Phase 1 (`src/canvas/shaders/*.glsl`).
 - All real copy — tagline, roadmap milestones, resource links, team members — is
   still to be written.
