@@ -140,17 +140,18 @@ Written down because it shapes the architecture, starting in Phase 1:
 - [x] **Phase 1 — Particle warp background** _(complete)_
       100k-particle GPU warp in one draw call, cursor repulsion, hold-to-boost,
       a temporary wheel-driven scroll hook, and a dev-only Leva tuner.
-- [ ] **Phase 2 — Scroll system & shell**
-      Lenis + GSAP ScrollTrigger, navbar with scroll-spy, custom cursor,
-      section stubs. **Also: replace `useScrollBoost` with Lenis velocity** —
-      see the note in that file.
-- [ ] **Phase 3 — The shader blob**
-      Custom glass/iridescent centerpiece and its scroll choreography.
+- [x] **Phase 2 — Scroll system & shell** _(complete)_
+      Lenis bridged to GSAP/ScrollTrigger, Lenis velocity driving the warp,
+      magnetic navbar with scroll-spy, four section stubs.
+- [x] **Phase 3 — The shader blob** _(complete)_
+      Noise-displaced icosahedron with an iridescent glass/chrome shader,
+      HDR environment reflections, preloader intro, masked hero reveal, and
+      one scrubbed ScrollTrigger timeline for the Home -> Roadmap move.
 - [ ] **Phase 4 — Scroll storytelling**
       Real section content, text reveals, pinning, section transitions.
 - [ ] **Phase 5 — Polish & performance**
-      Post-processing stack, preloader, reduced-motion and mobile fallbacks,
-      final perf pass.
+      Post-processing stack, reduced-motion and mobile fallbacks, final perf
+      pass. **Also: self-host the environment HDR** — see Open questions.
 
 Phases 1–5 are the proposed shape based on the brief — adjust freely at each
 kickoff. Phase 0 is the only one that is settled.

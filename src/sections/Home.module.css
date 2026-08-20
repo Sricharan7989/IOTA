@@ -1,0 +1,117 @@
+/* IOTA — hero section.
+   Left column of copy; the centerpiece owns the centre of frame behind it
+   (DESIGN.md §6). */
+
+.section {
+  position: relative;
+  min-height: 100svh;
+  display: flex;
+  align-items: center;
+  padding-block: var(--s-24);
+  padding-inline: var(--gutter);
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+}
+
+/* Scrim keeps the copy readable over the brightest part of the warp without
+   putting an opaque panel in front of the 3D. */
+.inner::before {
+  content: '';
+  position: absolute;
+  inset: -70% -25%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    46% 52% at 24% 50%,
+    var(--c-scrim) 0%,
+    transparent 72%
+  );
+}
+
+.copy {
+  /* Held to the left half on wide screens so the blob has room to breathe. */
+  max-width: min(62ch, 54%);
+}
+
+/* Each masked line: the wrapper clips, the child slides. */
+.mask {
+  display: block;
+  overflow: hidden;
+  /* A little vertical slack so descenders and glow are not shaved off. */
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+.line {
+  display: block;
+  will-change: transform;
+}
+
+/* ---- Eyebrow ---- */
+
+.eyebrow {
+  margin-bottom: var(--s-6);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-mute);
+}
+
+.diamond {
+  color: var(--c-violet);
+}
+
+/* ---- Wordmark ---- */
+
+.wordmark {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: var(--t-hero);
+  line-height: 0.92;
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+  text-shadow: var(--shadow-text);
+}
+
+/* ---- Headline ---- */
+
+.headline {
+  margin-top: var(--s-6);
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: var(--t-h2);
+  line-height: 1.05;
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+  text-shadow: var(--shadow-text);
+}
+
+/* ---- Sub ---- */
+
+.sub {
+  margin-top: var(--s-4);
+  max-width: 46ch;
+  color: var(--c-text-mute);
+  text-shadow: var(--shadow-text);
+}
+
+@media (max-width: 900px) {
+  .copy {
+    max-width: 100%;
+  }
+
+  .inner::before {
+    inset: -60% -30%;
+    background: radial-gradient(
+      70% 60% at 50% 50%,
+      var(--c-scrim) 0%,
+      transparent 78%
+    );
+  }
+}

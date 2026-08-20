@@ -1,0 +1,59 @@
+/* IOTA — intro overlay.
+   Sits above everything until the intro finishes, then slides away. */
+
+.root {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  display: grid;
+  place-items: center;
+  background: var(--c-black);
+  /* The wipe is a transform, never a layout or clip animation — DESIGN.md §5. */
+  will-change: transform;
+}
+
+.inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--s-6);
+}
+
+.wordmark {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(2.5rem, 8vw, 5rem);
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+}
+
+/* Thin progress rule under the wordmark. */
+.track {
+  position: relative;
+  width: clamp(180px, 32vw, 340px);
+  height: 1px;
+  background: var(--c-hairline);
+  overflow: hidden;
+}
+
+.bar {
+  position: absolute;
+  inset: 0;
+  background: var(--g-iota);
+  transform: scaleX(0);
+  transform-origin: 0 50%;
+}
+
+.counter {
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  color: var(--c-text-faint);
+  /* Tabular figures stop the label jittering as the digits change. */
+  font-variant-numeric: tabular-nums;
+}
+
+.done {
+  /* Removed from the tree after the wipe so it can never trap a click. */
+  pointer-events: none;
+}

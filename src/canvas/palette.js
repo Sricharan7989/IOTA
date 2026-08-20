@@ -43,9 +43,23 @@ export function hexToVec3(hex, target = new Vector3()) {
   )
 }
 
+/* The hex literals below are FALLBACKS ONLY — used if a custom property is
+   missing at read time. tokens.css remains the source of truth, and this module
+   is the single place in the app allowed to name a colour in JS. */
+
 /** Warp palette defaults, pulled from tokens.css. */
 export const warpPalette = {
   blue: () => readToken('--c-blue', '#5d86ff'),
   violet: () => readToken('--c-violet', '#9d7bff'),
   white: () => readToken('--c-glow', '#c7d4ff'),
+}
+
+/** Centerpiece palette, pulled from tokens.css. */
+export const blobPalette = {
+  blue: () => readToken('--c-blue', '#5d86ff'),
+  violet: () => readToken('--c-violet', '#9d7bff'),
+  glow: () => readToken('--c-glow', '#c7d4ff'),
+  // The analytic environment ramp: near-black at the horizon up to a deep blue.
+  envLow: () => readToken('--c-black', '#05060c'),
+  envHigh: () => readToken('--c-blue-deep', '#3a5fd9'),
 }

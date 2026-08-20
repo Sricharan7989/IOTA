@@ -30,9 +30,32 @@ export const scrollState = {
 
 let lenis = null
 let tickerCallback = null
+let locked = false
 
 export function getLenis() {
   return lenis
+}
+
+/**
+ * Lock/unlock page scrolling.
+ *
+ * These exist rather than callers poking Lenis directly because of effect
+ * ordering: React runs child effects before parent effects, so the preloader
+ * locks scroll BEFORE App's useSmoothScroll has created the Lenis instance.
+ * Holding the intent in a module flag means initSmoothScroll can honour a lock
+ * that was requested before it ran, and the `overflow` fallback covers the
+ * reduced-motion case where Lenis never exists at all.
+ */
+export function lockScroll() {
+  locked = true
+  document.documentElement.style.overflow = 'hidden'
+  lenis?.stop()
+}
+
+export function unlockScroll() {
+  locked = false
+  document.documentElement.style.overflow = ''
+  lenis?.start()
 }
 
 export function initSmoothScroll() {
@@ -74,6 +97,9 @@ export function initSmoothScroll() {
   // GSAP's lag smoothing would freeze the ticker after a stall and desync
   // Lenis from the real scroll position.
   gsap.ticker.lagSmoothing(0)
+
+  // Something locked scroll before we existed — honour it now.
+  if (locked) lenis.stop()
 
   return lenis
 }

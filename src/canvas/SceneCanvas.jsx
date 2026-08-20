@@ -1,19 +1,18 @@
 /* IOTA — the single WebGL context for the entire page.
-   There is exactly one <Canvas> and it never unmounts. Sections will scroll
-   over it rather than owning canvases of their own, so that later phases can
-   run one continuous camera journey across the whole page. */
+   There is exactly one <Canvas> and it never unmounts. Sections scroll over it
+   rather than owning canvases of their own, which is what lets one continuous
+   camera journey run across the whole page.
+
+   Canvas host only — the scene graph lives in Scene.jsx. */
 import { Suspense, lazy } from 'react'
 import { Canvas } from '@react-three/fiber'
-import WarpField from './WarpField'
+import Scene from './Scene'
 import styles from './SceneCanvas.module.css'
 
 // `import.meta.env.DEV` is statically replaced at build time, so in production
-// these collapse to `null` and the dynamic imports are dropped by the bundler.
-// That keeps r3f-perf (a devDependency) and leva out of the shipped graph.
+// this collapses to `null` and the dynamic import is dropped by the bundler.
+// That keeps r3f-perf (a devDependency) out of the shipped graph.
 const PerfPanel = import.meta.env.DEV ? lazy(() => import('./PerfPanel')) : null
-const WarpFieldTuner = import.meta.env.DEV
-  ? lazy(() => import('./WarpFieldTuner'))
-  : null
 
 export default function SceneCanvas() {
   return (
@@ -32,16 +31,7 @@ export default function SceneCanvas() {
           stencil: false,
         }}
       >
-        {/* The permanent background. In dev the tuner wraps it to drive the
-            same component from Leva; in production it mounts bare with the
-            defaults baked into WARP_DEFAULTS. */}
-        {WarpFieldTuner ? (
-          <Suspense fallback={null}>
-            <WarpFieldTuner />
-          </Suspense>
-        ) : (
-          <WarpField />
-        )}
+        <Scene />
 
         {PerfPanel ? (
           <Suspense fallback={null}>

@@ -15,9 +15,8 @@ import fragmentShader from './shaders/warp.frag.glsl'
 import { hexToVec3, warpPalette } from './palette'
 import { usePointer } from '../hooks/usePointer'
 import { scrollState } from '../lib/scroll'
-
-/** Frame-rate independent damping factor — DESIGN.md §5. */
-const damp = (dt, lambda) => 1 - Math.exp(-lambda * dt)
+import { choreo } from '../lib/choreography'
+import { dampFactor as damp } from '../lib/math'
 
 export const WARP_DEFAULTS = {
   count: 100000,
@@ -39,6 +38,9 @@ export const WARP_DEFAULTS = {
   // reacts to gentler scrolls.
   scrollScale: 22,
   scrollInfluence: 1,
+  // How much the scripted Home -> Roadmap move accelerates the warp on its
+  // own, independently of how fast you happen to be scrolling.
+  choreoInfluence: 0.55,
 }
 
 export default function WarpField({
@@ -59,6 +61,7 @@ export default function WarpField({
   mixViolet = WARP_DEFAULTS.mixViolet,
   scrollScale = WARP_DEFAULTS.scrollScale,
   scrollInfluence = WARP_DEFAULTS.scrollInfluence,
+  choreoInfluence = WARP_DEFAULTS.choreoInfluence,
   colorBlue,
   colorViolet,
   colorWhite,
@@ -160,14 +163,19 @@ export default function WarpField({
     uniforms.uMouse.value.set(p.x, p.y)
 
     // ---- Boost -----------------------------------------------------------
-    // Two energy sources feed one boost: holding the pointer, and scrolling.
-    // Lenis publishes an already-smoothed velocity, so it needs normalising
-    // but no extra filtering of its own.
+    // Three energy sources feed one boost: holding the pointer, raw scroll
+    // speed, and the scripted hero move. Lenis publishes an already-smoothed
+    // velocity, so it needs normalising but no extra filtering of its own.
     const scrollNorm = Math.min(
       1,
       Math.abs(scrollState.velocity) / Math.max(scrollScale, 0.001),
     )
-    const target = Math.min(1, (p.down ? 1 : 0) + scrollNorm * scrollInfluence)
+    const target = Math.min(
+      1,
+      (p.down ? 1 : 0) +
+        scrollNorm * scrollInfluence +
+        choreo.heroProgress * choreoInfluence,
+    )
     // Accelerating harder than it decays makes the hold feel responsive while
     // the release still eases out.
     boost.current += (target - boost.current) * damp(dt, target > boost.current ? 6 : 2.2)
