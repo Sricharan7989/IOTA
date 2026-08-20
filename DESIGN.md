@@ -183,10 +183,17 @@ Motion is the product. Everything moves; nothing is fast.
 ```
 src/components/   DOM UI — navbar, cursor, layout chrome
 src/canvas/       everything inside <Canvas> (R3F / three)
+  └ shaders/      .glsl files, imported as strings
 src/sections/     the scroll journey, one file per section
-src/hooks/        shared behaviour — useScroll, useMouse, …
+src/hooks/        shared behaviour — useMagnetic, usePointer, …
+src/lib/          framework glue and singletons that outlive React —
+                  currently the Lenis/GSAP scroll core
 src/styles/       tokens.css + global.css only
 ```
+
+`hooks/` vs `lib/`: if it calls a React hook it goes in `hooks/`; if it's a
+module-level singleton or plain function that React merely starts and stops, it
+goes in `lib/`.
 
 - One component per file, with a short comment header saying what it is.
 - Co-locate styles as `Component.module.css` beside the component.

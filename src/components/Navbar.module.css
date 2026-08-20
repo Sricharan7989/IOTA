@@ -1,0 +1,130 @@
+/* IOTA — fixed navbar.
+   Transparent over the content; only the hairline appears once the hero has
+   scrolled away. */
+
+.nav {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline: 0;
+  z-index: var(--z-nav);
+  height: var(--nav-h);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: var(--gutter);
+  /* Transparent by default — the border and backdrop only arrive past the
+     hero, so nothing competes with the warp on first paint. */
+  border-block-end: 1px solid transparent;
+  transition:
+    border-color var(--d-base) var(--e-out),
+    background-color var(--d-base) var(--e-out),
+    backdrop-filter var(--d-base) var(--e-out);
+}
+
+.past {
+  border-block-end-color: var(--c-hairline);
+  background-color: color-mix(in srgb, var(--c-black) 55%, transparent);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+/* ---- Wordmark ---- */
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 1.125rem;
+  letter-spacing: 0.04em;
+  color: var(--c-text);
+}
+
+.dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--c-blue);
+  box-shadow: var(--glow-blue);
+  /* Reads as a live status light rather than punctuation. The global
+     reduced-motion rule in global.css neutralises this. */
+  animation: pulse 2.4s var(--e-in-out) infinite;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.82);
+  }
+}
+
+/* ---- Links ---- */
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.link {
+  position: relative;
+  display: inline-block;
+  /* Padding gives the magnetic pull somewhere to happen without the label
+     colliding with its neighbours. */
+  padding: var(--s-2) var(--s-4);
+  font-family: var(--f-body);
+  font-weight: 500;
+  font-size: 0.875rem;
+  color: var(--c-text-mute);
+  transition: color var(--d-fast) var(--e-out);
+  will-change: transform;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--c-text);
+}
+
+/* Gradient underline, grown from the centre. */
+.link::after {
+  content: '';
+  position: absolute;
+  inset-inline: var(--s-4);
+  inset-block-end: 2px;
+  height: 1px;
+  background: var(--g-iota);
+  transform: scaleX(0);
+  transform-origin: 50% 50%;
+  transition: transform var(--d-base) var(--e-out);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+.active {
+  color: var(--c-text);
+  text-shadow: var(--glow-violet);
+}
+
+.active::after {
+  transform: scaleX(1);
+}
+
+@media (max-width: 640px) {
+  .links {
+    gap: 0;
+  }
+
+  .link {
+    padding-inline: var(--s-2);
+    font-size: 0.8125rem;
+  }
+}

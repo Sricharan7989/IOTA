@@ -27,6 +27,12 @@
   --glow-blue: 0 0 24px rgba(93, 134, 255, 0.35);
   --glow-violet: 0 0 24px rgba(157, 123, 255, 0.35);
 
+  /* ---------- Legibility over the warp ---------- */
+  /* The particle field is bright in places; these keep DOM text readable
+     without laying an opaque panel over the 3D. */
+  --c-scrim: rgba(5, 6, 12, 0.72);
+  --shadow-text: 0 2px 30px rgba(5, 6, 12, 0.9);
+
   /* ---------- Signature gradient ---------- */
   --g-iota: linear-gradient(120deg, var(--c-blue) 0%, var(--c-violet) 100%);
 

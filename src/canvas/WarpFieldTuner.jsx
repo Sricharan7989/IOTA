@@ -35,6 +35,24 @@ export default function WarpFieldTuner() {
       streak: { value: WARP_DEFAULTS.streak, min: 0, max: 3, step: 0.01 },
     }),
 
+    Scroll: folder({
+      // Lenis velocity that counts as full throttle. Lower = twitchier.
+      scrollScale: {
+        value: WARP_DEFAULTS.scrollScale,
+        min: 2,
+        max: 90,
+        step: 1,
+        label: 'velocity scale',
+      },
+      scrollInfluence: {
+        value: WARP_DEFAULTS.scrollInfluence,
+        min: 0,
+        max: 1,
+        step: 0.01,
+        label: 'influence',
+      },
+    }),
+
     Look: folder({
       size: { value: WARP_DEFAULTS.size, min: 0.2, max: 12, step: 0.1 },
       maxSize: { value: WARP_DEFAULTS.maxSize, min: 4, max: 64, step: 1 },

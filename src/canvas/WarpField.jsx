@@ -14,7 +14,7 @@ import vertexShader from './shaders/warp.vert.glsl'
 import fragmentShader from './shaders/warp.frag.glsl'
 import { hexToVec3, warpPalette } from './palette'
 import { usePointer } from '../hooks/usePointer'
-import { useScrollBoost } from '../hooks/useScrollBoost'
+import { scrollState } from '../lib/scroll'
 
 /** Frame-rate independent damping factor — DESIGN.md §5. */
 const damp = (dt, lambda) => 1 - Math.exp(-lambda * dt)
@@ -35,6 +35,10 @@ export const WARP_DEFAULTS = {
   repelStrength: 0.16,
   mixBlue: 0.6,
   mixViolet: 0.3,
+  // Lenis velocity that counts as "full throttle" scrolling. Lower = the warp
+  // reacts to gentler scrolls.
+  scrollScale: 22,
+  scrollInfluence: 1,
 }
 
 export default function WarpField({
@@ -53,13 +57,14 @@ export default function WarpField({
   repelStrength = WARP_DEFAULTS.repelStrength,
   mixBlue = WARP_DEFAULTS.mixBlue,
   mixViolet = WARP_DEFAULTS.mixViolet,
+  scrollScale = WARP_DEFAULTS.scrollScale,
+  scrollInfluence = WARP_DEFAULTS.scrollInfluence,
   colorBlue,
   colorViolet,
   colorWhite,
 }) {
-  // Both return refs rather than state — see the note in usePointer.js.
+  // Returns a ref rather than state — see the note in usePointer.js.
   const pointer = usePointer()
-  const scrollEnergy = useScrollBoost()
 
   // Accumulated travel distance and smoothed boost. Refs, not state: these
   // change every frame and must never trigger a React render.
@@ -155,14 +160,17 @@ export default function WarpField({
     uniforms.uMouse.value.set(p.x, p.y)
 
     // ---- Boost -----------------------------------------------------------
-    // Two energy sources: holding the pointer, and scroll. Phase 2 swaps the
-    // scroll source for Lenis velocity; nothing else here changes.
-    const energy = scrollEnergy.current
-    scrollEnergy.current = energy * Math.exp(-dt * 2.2)
-    const target = Math.min(1, (p.down ? 1 : 0) + energy)
+    // Two energy sources feed one boost: holding the pointer, and scrolling.
+    // Lenis publishes an already-smoothed velocity, so it needs normalising
+    // but no extra filtering of its own.
+    const scrollNorm = Math.min(
+      1,
+      Math.abs(scrollState.velocity) / Math.max(scrollScale, 0.001),
+    )
+    const target = Math.min(1, (p.down ? 1 : 0) + scrollNorm * scrollInfluence)
     // Accelerating harder than it decays makes the hold feel responsive while
     // the release still eases out.
-    boost.current += (target - boost.current) * damp(dt, target > boost.current ? 4.5 : 2)
+    boost.current += (target - boost.current) * damp(dt, target > boost.current ? 6 : 2.2)
 
     const speed = baseSpeed + boost.current * boostSpeed
 

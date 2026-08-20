@@ -1,12 +1,8 @@
 /* IOTA — root layout.
    Two stacked layers: the fixed WebGL canvas at z-index 0, and this scrolling
-   DOM layer at z-index 1. Nothing else competes for the stacking context. */
+   DOM layer at z-index 1. Sections own their own height and padding. */
 
 .content {
   position: relative;
   z-index: var(--z-content);
-  min-height: 100svh;
-  display: grid;
-  place-items: center;
-  padding-inline: var(--gutter);
 }
