@@ -13,14 +13,17 @@ import { useHeroTimeline } from '../hooks/useHeroTimeline'
 import styles from './Home.module.css'
 
 /* ========================================================================
-   PLACEHOLDER COPY — swap these four strings for the real thing.
-   Nothing else in the file needs to change.
+   PLACEHOLDER COPY — swap these strings for the real thing.
+   `headingLead` / `headingAccent` render as two lines; the accent word is the
+   italic gradient one. Nothing else in the file needs to change.
    ======================================================================== */
 const COPY = {
   eyebrow: 'IOTA CLUB',
-  wordmark: 'IOTA',
-  headline: 'The signal in the noise.',
-  sub: 'A collective building at the edge of intelligence.',
+  headingLead: 'Building the',
+  headingAccent: 'Signal.',
+  cornerLeft: 'IIIT · IST',
+  cornerRight: 'AI · INTERACTIVE',
+  scrollCue: 'Scroll to explore',
 }
 /* ===================== END PLACEHOLDER COPY ============================ */
 
@@ -33,46 +36,58 @@ export default function Home({ revealed = false }) {
   return (
     <section id="home" ref={root} className={styles.section}>
       <div className={styles.inner}>
-        <div className={styles.copy}>
-          <div data-parallax="0.6">
-            <p className={styles.eyebrow}>
-              <span className={styles.mask}>
-                <span className={styles.line} data-reveal>
-                  <span className={styles.diamond}>◇</span> {COPY.eyebrow}
-                </span>
+        {/* ---- Top corners ---- */}
+        <div className={styles.topRow} data-parallax="0.5">
+          <p className={`${styles.label} ${styles.eyebrow}`}>
+            <span className={styles.mask}>
+              <span className={styles.line} data-reveal>
+                <span className={styles.diamond}>◇</span> {COPY.eyebrow}
               </span>
-            </p>
-          </div>
+            </span>
+          </p>
 
-          <div data-parallax="1">
-            <h1 className={styles.wordmark}>
-              <span className={styles.mask}>
-                <span className={styles.line} data-reveal>
-                  {COPY.wordmark}
-                </span>
+          <p className={`${styles.label} ${styles.cornerLabel}`}>
+            <span className={styles.mask}>
+              <span className={styles.line} data-reveal>
+                {COPY.cornerLeft}
               </span>
-            </h1>
-          </div>
+            </span>
+          </p>
+        </div>
 
-          <div data-parallax="1.35">
-            <p className={styles.headline}>
-              <span className={styles.mask}>
-                <span className={styles.line} data-reveal>
-                  {COPY.headline}
-                </span>
+        {/* ---- Headline ---- */}
+        <div className={styles.headingBlock} data-parallax="1">
+          <h1 className={styles.heading}>
+            <span className={styles.mask}>
+              <span className={styles.line} data-reveal>
+                {COPY.headingLead}
               </span>
-            </p>
-          </div>
+            </span>
+            <span className={styles.mask}>
+              <span className={`${styles.line} ${styles.accent}`} data-reveal>
+                {COPY.headingAccent}
+              </span>
+            </span>
+          </h1>
+        </div>
 
-          <div data-parallax="1.7">
-            <p className={styles.sub}>
-              <span className={styles.mask}>
-                <span className={styles.line} data-reveal>
-                  {COPY.sub}
-                </span>
+        {/* ---- Bottom corners ---- */}
+        <div className={styles.bottomRow} data-parallax="1.5">
+          <p className={`${styles.label} ${styles.cornerLabel}`}>
+            <span className={styles.mask}>
+              <span className={styles.line} data-reveal>
+                {COPY.cornerRight}
               </span>
-            </p>
-          </div>
+            </span>
+          </p>
+
+          <p className={`${styles.label} ${styles.scrollCue}`}>
+            <span className={styles.mask}>
+              <span className={styles.line} data-reveal>
+                {COPY.scrollCue} <span className={styles.arrow}>↓</span>
+              </span>
+            </span>
+          </p>
         </div>
       </div>
     </section>

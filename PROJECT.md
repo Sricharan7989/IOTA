@@ -102,9 +102,19 @@ Single scroll page. Navbar: **Home · Roadmap · Resources · Team**.
 
 ## The two hero pieces
 
-**Centerpiece — abstract shader blob.** Glass/chrome with iridescent blue-violet
-refraction. **Not a character model.** It is the emotional anchor of the page and
-it deforms and travels across the entire scroll.
+**Centerpiece — the neon figure.** `public/models/iota-neon.glb`, a Meshy-generated
+neon-visor figure, lit dramatically and travelling across the scroll.
+
+> **Direction change.** This originally read "an abstract shader blob, **not** a
+> character model". That was reversed at the Phase 3 rebuild: the centerpiece is
+> now a real mesh. The premium read comes from *lighting*, not geometry — the
+> mesh is ~8k triangles with one baked material, so a strong blue rim, a violet
+> fill, near-zero ambient and an emissive-mapped visor do the work.
+>
+> The old shader blob (`Blob.jsx`, `BlobTuner.jsx`, `shaders/blob.*.glsl`,
+> `EnvironmentProbe.jsx`) is **kept but unreferenced** — it tree-shakes out of
+> the bundle entirely, so it costs nothing shipped. Delete it once the model
+> direction is settled.
 
 **Background — GPU particle warp.** Blue/violet streaks behind everything,
 reacting to scroll velocity (streaks stretch) and cursor (flow bends). Behind
@@ -148,10 +158,12 @@ Written down because it shapes the architecture, starting in Phase 1:
 - [x] **Phase 2 — Scroll system & shell** _(complete)_
       Lenis bridged to GSAP/ScrollTrigger, Lenis velocity driving the warp,
       magnetic navbar with scroll-spy, four section stubs.
-- [x] **Phase 3 — The shader blob** _(complete)_
-      Noise-displaced icosahedron with an iridescent glass/chrome shader,
-      HDR environment reflections, preloader intro, masked hero reveal, and
-      one scrubbed ScrollTrigger timeline for the Home -> Roadmap move.
+- [x] **Phase 3 — The centerpiece** _(complete; rebuilt around a real model)_
+      First pass: noise-displaced icosahedron with a custom iridescent shader.
+      Rebuilt as the neon figure model (`HeroModel.jsx`) with a dramatic light
+      rig, emissive-mapped visor glow and drag-to-orbit. Also: preloader intro,
+      masked hero reveal, and one scrubbed ScrollTrigger timeline for the
+      Home -> Roadmap move.
 - [ ] **Phase 4 — Scroll storytelling** _(deferred — comes after Phase 5)_
       Real section content for Roadmap / Resources / Team, text reveals,
       pinning, section transitions.

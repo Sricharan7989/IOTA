@@ -77,10 +77,19 @@ large background fill.
 
 ### 3D colour notes
 
-The centerpiece is not "blue". It is near-colourless glass that _refracts into_
-blue-violet. Chromatic dispersion pushes red toward `--c-violet` and blue toward
-`--c-blue`. Particles sample the `--g-iota` ramp, biased blue at depth and
-violet near camera.
+The centerpiece is a **lit object, not a coloured one**. The mesh carries a baked
+base-colour texture; everything that makes it read blue-violet comes from the
+light rig — a strong `--c-blue` rim from behind, a softer `--c-violet` fill from
+the opposite side, and near-zero ambient so a large part of it stays genuinely
+dark. Contrast is the whole effect: an evenly-lit model looks like an asset
+preview.
+
+The visor self-illuminates by reusing the base-colour texture as an emissive map
+with a white emissive colour, so only the bright neon texels glow and the dark
+body stays dark.
+
+Particles sample the `--g-iota` ramp, biased blue at depth and violet near
+camera.
 
 ---
 
@@ -96,7 +105,7 @@ violet near camera.
 
 | Token       | Range             | Use                     |
 | ----------- | ----------------- | ----------------------- |
-| `--t-hero`  | 4rem → 11rem      | The IOTA wordmark only. |
+| `--t-hero`  | 4rem → 11rem      | Hero display heading + preloader wordmark. |
 | `--t-h1`    | 2.5rem → 5rem     | Section titles.         |
 | `--t-h2`    | 1.75rem → 2.75rem | Sub-headings.           |
 | `--t-body`  | 1rem → 1.125rem   | Paragraphs.             |
@@ -104,7 +113,11 @@ violet near camera.
 
 ### Rules
 
-- Chakra Petch is a wide face — always pull it in with `--tr-display` (`-0.02em`).
+- Chakra Petch is a wide face — always pull it in with `--tr-display` (`-0.02em`);
+  the giant hero heading goes further, to `-0.03em`.
+- The hero heading is **uppercase**, with one accent word in **italic** filled by
+  `--g-iota`. A gradient fill cannot carry a `text-shadow`, so the legibility
+  scrim behind it does that job instead.
 - Mono labels always get `--tr-label` (`0.22em`) **and** uppercase. No exceptions.
 - Body copy caps at **62ch**. Never full-bleed paragraphs.
 - Line height: 0.92 hero, 1.05 headings, 1.6 body.

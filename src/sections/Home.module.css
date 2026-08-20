@@ -1,48 +1,47 @@
 /* IOTA — hero section.
-   Left column of copy; the centerpiece owns the centre of frame behind it
-   (DESIGN.md §6). */
+   Corner-anchored mono labels around a giant display heading, with the model
+   holding the centre-right of frame. Copy sits low-left so it never fights the
+   centerpiece for the same pixels. */
 
 .section {
   position: relative;
   min-height: 100svh;
   display: flex;
-  align-items: center;
-  padding-block: var(--s-24);
+  align-items: stretch;
+  padding-block: calc(var(--nav-h) + var(--s-8)) var(--s-12);
   padding-inline: var(--gutter);
 }
 
 .inner {
   position: relative;
+  display: flex;
+  flex-direction: column;
   width: 100%;
   max-width: var(--max-w);
   margin-inline: auto;
 }
 
-/* Scrim keeps the copy readable over the brightest part of the warp without
+/* Scrim keeps the copy readable over the warp and the model's glow without
    putting an opaque panel in front of the 3D. */
 .inner::before {
   content: '';
   position: absolute;
-  inset: -70% -25%;
+  inset: -30% -25% -20% -25%;
   z-index: -1;
   pointer-events: none;
   background: radial-gradient(
-    46% 52% at 24% 50%,
+    54% 58% at 22% 62%,
     var(--c-scrim) 0%,
-    transparent 72%
+    transparent 74%
   );
 }
 
-.copy {
-  /* Held to the left half on wide screens so the blob has room to breathe. */
-  max-width: min(62ch, 54%);
-}
+/* ---- Masked lines ---- */
 
-/* Each masked line: the wrapper clips, the child slides. */
 .mask {
   display: block;
   overflow: hidden;
-  /* A little vertical slack so descenders and glow are not shaved off. */
+  /* Vertical slack so descenders and glow are not shaved off by the mask. */
   padding-block: 0.12em;
   margin-block: -0.12em;
 }
@@ -52,14 +51,17 @@
   will-change: transform;
 }
 
-/* ---- Eyebrow ---- */
+/* ---- Mono microlabels ---- */
 
-.eyebrow {
-  margin-bottom: var(--s-6);
+.label {
   font-family: var(--f-mono);
   font-size: var(--t-label);
   letter-spacing: var(--tr-label);
   text-transform: uppercase;
+  color: var(--c-text-faint);
+}
+
+.eyebrow {
   color: var(--c-text-mute);
 }
 
@@ -67,51 +69,110 @@
   color: var(--c-violet);
 }
 
-/* ---- Wordmark ---- */
+/* Top row: eyebrow left, first microlabel right. */
+.topRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-6);
+}
 
-.wordmark {
-  font-family: var(--f-display);
-  font-weight: 700;
-  font-size: var(--t-hero);
-  line-height: 0.92;
-  letter-spacing: var(--tr-display);
-  color: var(--c-text);
-  text-shadow: var(--shadow-text);
+/* Bottom row: second microlabel left, scroll cue right. */
+.bottomRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--s-6);
+  margin-top: var(--s-8);
 }
 
 /* ---- Headline ---- */
 
-.headline {
-  margin-top: var(--s-6);
+.headingBlock {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* Held to the left so the model owns the centre-right of the frame. */
+  max-width: min(18ch, 62%);
+}
+
+.heading {
   font-family: var(--f-display);
-  font-weight: 600;
-  font-size: var(--t-h2);
-  line-height: 1.05;
-  letter-spacing: var(--tr-display);
+  font-weight: 700;
+  font-size: var(--t-hero);
+  line-height: 0.88;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
   color: var(--c-text);
   text-shadow: var(--shadow-text);
 }
 
-/* ---- Sub ---- */
+/* The accent word: italic, filled with the signature gradient. */
+.accent {
+  font-style: italic;
+  background: var(--g-iota);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  /* A gradient fill cannot carry a text-shadow, so the legibility scrim under
+     it does that job instead. */
+  text-shadow: none;
+  /* Italic Chakra Petch overhangs its box; without this the leading edge of
+     the glyph gets clipped by the mask. */
+  padding-inline-end: 0.08em;
+}
 
-.sub {
-  margin-top: var(--s-4);
-  max-width: 46ch;
+/* ---- Scroll cue ---- */
+
+.scrollCue {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
   color: var(--c-text-mute);
-  text-shadow: var(--shadow-text);
+  white-space: nowrap;
+}
+
+.arrow {
+  display: inline-block;
+  color: var(--c-blue);
+  animation: nudge 2.2s var(--e-in-out) infinite;
+}
+
+@keyframes nudge {
+  0%,
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 0.5;
+  }
 }
 
 @media (max-width: 900px) {
-  .copy {
+  .headingBlock {
     max-width: 100%;
+    justify-content: center;
+  }
+
+  .heading {
+    font-size: clamp(2.75rem, 13vw, 5rem);
   }
 
   .inner::before {
-    inset: -60% -30%;
+    inset: -30% -30%;
     background: radial-gradient(
-      70% 60% at 50% 50%,
+      74% 60% at 50% 55%,
       var(--c-scrim) 0%,
       transparent 78%
     );
+  }
+
+  /* The two microlabels stop being "opposite corners" on a narrow screen and
+     just become clutter next to the scroll cue. */
+  .cornerLabel {
+    display: none;
   }
 }

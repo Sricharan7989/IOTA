@@ -54,7 +54,14 @@ export const warpPalette = {
   white: () => readToken('--c-glow', '#c7d4ff'),
 }
 
-/** Centerpiece palette, pulled from tokens.css. */
+/** Hero light-rig colours, pulled from tokens.css. */
+export const heroPalette = {
+  key: () => readToken('--c-blue', '#5d86ff'),
+  fill: () => readToken('--c-violet', '#9d7bff'),
+  kicker: () => readToken('--c-glow', '#c7d4ff'),
+}
+
+/** Centerpiece palette — used by the retained shader-blob centerpiece. */
 export const blobPalette = {
   blue: () => readToken('--c-blue', '#5d86ff'),
   violet: () => readToken('--c-violet', '#9d7bff'),
