@@ -7,32 +7,38 @@
    the script never runs. */
 import { useEffect } from 'react'
 import gsap from 'gsap'
-
-const prefersReducedMotion = () =>
-  typeof window !== 'undefined' &&
-  window.matchMedia('(prefers-reduced-motion: reduce)').matches
+import { prefersReducedMotion } from '../lib/quality'
 
 export function useMaskedReveal(scopeRef, revealed, { stagger = 0.09 } = {}) {
-  // Hide on mount so nothing flashes behind the preloader.
+  // Hide on mount so nothing flashes behind the preloader. Reduced motion
+  // hides with opacity instead of displacement — DESIGN.md §5 says reveals
+  // become fades, not that they disappear.
   useEffect(() => {
-    if (prefersReducedMotion()) return
     const scope = scopeRef.current
     if (!scope) return
-    gsap.set(scope.querySelectorAll('[data-reveal]'), { yPercent: 110 })
+    const lines = scope.querySelectorAll('[data-reveal]')
+    if (prefersReducedMotion()) {
+      gsap.set(lines, { opacity: 0 })
+    } else {
+      gsap.set(lines, { yPercent: 110 })
+    }
   }, [scopeRef])
 
   // Then play once the intro hands over.
   useEffect(() => {
-    if (!revealed || prefersReducedMotion()) return undefined
+    if (!revealed) return undefined
     const scope = scopeRef.current
     if (!scope) return undefined
 
-    const tween = gsap.to(scope.querySelectorAll('[data-reveal]'), {
-      yPercent: 0,
-      duration: 1.2,
-      ease: 'expo.out',
-      stagger,
-    })
+    const lines = scope.querySelectorAll('[data-reveal]')
+    const tween = prefersReducedMotion()
+      ? gsap.to(lines, { opacity: 1, duration: 0.5, ease: 'none', stagger: 0.05 })
+      : gsap.to(lines, {
+          yPercent: 0,
+          duration: 1.2,
+          ease: 'expo.out',
+          stagger,
+        })
 
     // Only kill the tween — reverting the context here would snap the lines
     // back to their hidden state.

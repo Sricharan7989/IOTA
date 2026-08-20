@@ -9,14 +9,15 @@ import { folder, useControls } from 'leva'
 import WarpField, { WARP_DEFAULTS } from './WarpField'
 import { warpPalette } from './palette'
 
-export default function WarpFieldTuner() {
+export default function WarpFieldTuner({ count, reducedMotion }) {
   const controls = useControls('Warp', {
     Field: folder(
       {
         // Regenerating the seed buffers is the only genuinely expensive
         // control here, hence the coarse step.
         count: {
-          value: WARP_DEFAULTS.count,
+          // Seeded from the detected quality tier, then user-controlled.
+          value: count ?? WARP_DEFAULTS.count,
           min: 5000,
           max: 300000,
           step: 5000,
@@ -86,5 +87,5 @@ export default function WarpFieldTuner() {
     }),
   })
 
-  return <WarpField {...controls} />
+  return <WarpField {...controls} reducedMotion={reducedMotion} />
 }

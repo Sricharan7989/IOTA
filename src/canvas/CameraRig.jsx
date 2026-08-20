@@ -15,6 +15,7 @@ export default function CameraRig({
   restZ = 6,
   dollyZ = 5.1,
   parallax = 0.18,
+  reducedMotion = false,
 }) {
   const pointer = usePointer()
   const progress = useRef(0)
@@ -23,6 +24,14 @@ export default function CameraRig({
   useFrame((state, delta) => {
     const dt = Math.min(delta, 0.05)
     const { camera } = state
+
+    // No scroll-scrubbed dolly and no pointer parallax under reduced motion —
+    // the camera simply sits at rest.
+    if (reducedMotion) {
+      camera.position.set(0, 0, restZ)
+      camera.lookAt(0, 0, 0)
+      return
+    }
 
     progress.current +=
       (choreo.heroProgress - progress.current) * dampFactor(dt, 5)

@@ -6,12 +6,13 @@
 import { folder, useControls } from 'leva'
 import Blob, { BLOB_DEFAULTS } from './Blob'
 
-export default function BlobTuner({ envMap }) {
+export default function BlobTuner({ envMap, detail, reducedMotion }) {
   const controls = useControls('Blob', {
     Form: folder({
       radius: { value: BLOB_DEFAULTS.radius, min: 0.4, max: 2.5, step: 0.05 },
       // Rebuilds the geometry, so this is the expensive control here.
-      detail: { value: BLOB_DEFAULTS.detail, min: 4, max: 64, step: 4 },
+      // Seeded from the detected quality tier, then user-controlled.
+      detail: { value: detail ?? BLOB_DEFAULTS.detail, min: 4, max: 64, step: 4 },
       distort: { value: BLOB_DEFAULTS.distort, min: 0, max: 1.5, step: 0.01 },
       noiseScale: { value: BLOB_DEFAULTS.noiseScale, min: 0.1, max: 4, step: 0.05 },
       noiseSpeed: { value: BLOB_DEFAULTS.noiseSpeed, min: 0, max: 1.5, step: 0.01 },
@@ -38,5 +39,5 @@ export default function BlobTuner({ envMap }) {
     }),
   })
 
-  return <Blob {...controls} envMap={envMap} />
+  return <Blob {...controls} envMap={envMap} reducedMotion={reducedMotion} />
 }

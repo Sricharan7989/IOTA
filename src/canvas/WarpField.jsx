@@ -65,6 +65,9 @@ export default function WarpField({
   colorBlue,
   colorViolet,
   colorWhite,
+  // Supplied by Scene from the quality tier — this component no longer sniffs
+  // the media query itself, so there is one source of truth for the whole app.
+  reducedMotion = false,
 }) {
   // Returns a ref rather than state — see the note in usePointer.js.
   const pointer = usePointer()
@@ -73,17 +76,6 @@ export default function WarpField({
   // change every frame and must never trigger a React render.
   const travel = useRef(0)
   const boost = useRef(0)
-  const reduced = useRef(false)
-
-  useEffect(() => {
-    const query = window.matchMedia('(prefers-reduced-motion: reduce)')
-    const sync = () => {
-      reduced.current = query.matches
-    }
-    sync()
-    query.addEventListener('change', sync)
-    return () => query.removeEventListener('change', sync)
-  }, [])
 
   // ---- Seeds -------------------------------------------------------------
   // Only depends on count. Radius, speed and colour are all uniforms, so
@@ -154,13 +146,19 @@ export default function WarpField({
     // A backgrounded tab returns one enormous delta; clamping stops the field
     // from jumping half a tunnel on the first frame back.
     const dt = Math.min(delta, 0.05)
-    const isReduced = reduced.current
+    const isReduced = reducedMotion
 
     // ---- Pointer ---------------------------------------------------------
+    // Frozen under reduced motion: with the repulsion live the field would
+    // never settle, and frameloop="demand" would have nothing to settle to.
     const p = pointer.current
-    p.x += (p.tx - p.x) * damp(dt, 12)
-    p.y += (p.ty - p.y) * damp(dt, 12)
-    uniforms.uMouse.value.set(p.x, p.y)
+    if (isReduced) {
+      uniforms.uMouse.value.set(0, 0)
+    } else {
+      p.x += (p.tx - p.x) * damp(dt, 12)
+      p.y += (p.ty - p.y) * damp(dt, 12)
+      uniforms.uMouse.value.set(p.x, p.y)
+    }
 
     // ---- Boost -----------------------------------------------------------
     // Three energy sources feed one boost: holding the pointer, raw scroll
@@ -170,20 +168,22 @@ export default function WarpField({
       1,
       Math.abs(scrollState.velocity) / Math.max(scrollScale, 0.001),
     )
-    const target = Math.min(
-      1,
-      (p.down ? 1 : 0) +
-        scrollNorm * scrollInfluence +
-        choreo.heroProgress * choreoInfluence,
-    )
+    const target = isReduced
+      ? 0
+      : Math.min(
+          1,
+          (p.down ? 1 : 0) +
+            scrollNorm * scrollInfluence +
+            choreo.heroProgress * choreoInfluence,
+        )
     // Accelerating harder than it decays makes the hold feel responsive while
     // the release still eases out.
     boost.current += (target - boost.current) * damp(dt, target > boost.current ? 6 : 2.2)
 
     const speed = baseSpeed + boost.current * boostSpeed
 
-    // DESIGN.md §5: reduced motion freezes the field. Cursor repulsion stays,
-    // since that is direct user input rather than ambient motion.
+    // DESIGN.md §5: reduced motion freezes the field completely — a still
+    // starfield, which still reads beautifully.
     if (!isReduced) {
       travel.current += dt * speed
       uniforms.uTime.value += dt

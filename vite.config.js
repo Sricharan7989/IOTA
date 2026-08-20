@@ -26,9 +26,25 @@ export default defineConfig({
         // Vite 8 runs on rolldown, whose chunking API is `codeSplitting` —
         // rollup's `manualChunks` is accepted but silently ignored.
         codeSplitting: {
+          // Order matters — first match wins.
           groups: [
+            // React MUST be grouped explicitly and first. Without this, the
+            // bundler folds react-dom into the r3f chunk (they share it), and
+            // because the entry needs createRoot on first paint that drags all
+            // of fiber + postprocessing onto the critical path — defeating the
+            // lazy <Canvas> entirely.
+            {
+              name: 'react',
+              test: /node_modules[\\/](react|react-dom|scheduler)[\\/]/,
+            },
+            // three is the heaviest dependency by far; keeping it in its own
+            // chunk means UI-only changes don't bust its cache entry. Only
+            // reachable through the lazily-imported SceneCanvas.
             { name: 'three', test: /node_modules[\\/]three[\\/]/ },
-            { name: 'r3f', test: /node_modules[\\/]@react-three[\\/]/ },
+            {
+              name: 'r3f',
+              test: /node_modules[\\/](@react-three|postprocessing)[\\/]/,
+            },
           ],
         },
       },

@@ -10,11 +10,20 @@ import { useEffect } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { choreo } from '../lib/choreography'
+import { prefersReducedMotion } from '../lib/quality'
 
 export function useHeroTimeline(scopeRef) {
   useEffect(() => {
     const scope = scopeRef.current
     if (!scope) return undefined
+
+    // No scroll-scrubbed choreography under reduced motion: the hero copy stays
+    // put and heroProgress holds at 0, which leaves the blob, camera and warp
+    // in their rest pose.
+    if (prefersReducedMotion()) {
+      choreo.heroProgress = 0
+      return undefined
+    }
 
     const context = gsap.context(() => {
       const layers = gsap.utils.toArray(scope.querySelectorAll('[data-parallax]'))

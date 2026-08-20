@@ -56,6 +56,7 @@ export default function Blob({
   scrollSpin = BLOB_DEFAULTS.scrollSpin,
   scrollDistort = BLOB_DEFAULTS.scrollDistort,
   envMap = null,
+  reducedMotion = false,
 }) {
   const mesh = useRef(null)
   const pointer = usePointer()
@@ -123,6 +124,26 @@ export default function Blob({
     const object = mesh.current
     if (!object) return
 
+    // Material settings are synced first, so they stay correct on the single
+    // frame the reduced-motion path renders.
+    uniforms.uNoiseScale.value = noiseScale
+    uniforms.uNoiseSpeed.value = noiseSpeed
+    uniforms.uEnvIntensity.value = envIntensity
+    uniforms.uFresnelPower.value = fresnelPower
+    uniforms.uFresnelStrength.value = fresnelStrength
+    uniforms.uRimStrength.value = rimStrength
+    uniforms.uIridescence.value = iridescence
+    uniforms.uExposure.value = exposure
+
+    // Reduced motion: no auto-morph, no idle spin, no scroll scrub, no cursor
+    // drift. The blob holds one still pose — which is the point.
+    if (reducedMotion) {
+      object.position.set(0, 0, 0)
+      object.scale.setScalar(1)
+      uniforms.uDistort.value = distort
+      return
+    }
+
     // Damp toward the scroll target rather than binding to it 1:1 — the
     // difference between "premium" and "twitchy" (DESIGN.md §5).
     progress.current +=
@@ -155,14 +176,6 @@ export default function Blob({
 
     uniforms.uTime.value += dt
     uniforms.uDistort.value = distort * (1 + p * scrollDistort)
-    uniforms.uNoiseScale.value = noiseScale
-    uniforms.uNoiseSpeed.value = noiseSpeed
-    uniforms.uEnvIntensity.value = envIntensity
-    uniforms.uFresnelPower.value = fresnelPower
-    uniforms.uFresnelStrength.value = fresnelStrength
-    uniforms.uRimStrength.value = rimStrength
-    uniforms.uIridescence.value = iridescence
-    uniforms.uExposure.value = exposure
   })
 
   return (

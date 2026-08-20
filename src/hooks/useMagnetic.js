@@ -10,6 +10,7 @@
      existing tween rather than allocating a new one every event. */
 import { useEffect, useRef } from 'react'
 import gsap from 'gsap'
+import { prefersReducedMotion } from '../lib/quality'
 
 export function useMagnetic({ strength = 0.38, duration = 0.6 } = {}) {
   const ref = useRef(null)
@@ -20,9 +21,7 @@ export function useMagnetic({ strength = 0.38, duration = 0.6 } = {}) {
 
     // A magnetic control that chases the pointer is precisely the sort of
     // motion prefers-reduced-motion exists to suppress.
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return undefined
-    }
+    if (prefersReducedMotion()) return undefined
 
     const moveX = gsap.quickTo(element, 'x', { duration, ease: 'expo.out' })
     const moveY = gsap.quickTo(element, 'y', { duration, ease: 'expo.out' })

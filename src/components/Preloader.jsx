@@ -8,6 +8,7 @@
 import { useEffect, useRef, useState } from 'react'
 import gsap from 'gsap'
 import { lockScroll, unlockScroll } from '../lib/scroll'
+import { prefersReducedMotion } from '../lib/quality'
 import styles from './Preloader.module.css'
 
 export default function Preloader({ onComplete }) {
@@ -18,7 +19,7 @@ export default function Preloader({ onComplete }) {
   const [finished, setFinished] = useState(false)
 
   useEffect(() => {
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    const reduced = prefersReducedMotion()
 
     // Lock scrolling. lockScroll records the intent in the scroll module, so
     // it holds even though this child effect runs before App's effect has

@@ -40,6 +40,11 @@ have to be able to open a file and contribute to it.
 - Vite 8 runs on **rolldown**. Rollup's `output.manualChunks` is accepted but
   **silently ignored**; the working API is `output.codeSplitting.groups`. That's
   what `vite.config.js` uses to split `three` into its own cacheable chunk.
+- **React must be its own chunk group, declared first.** Without an explicit
+  `react` group, the bundler folds `react-dom` into the `r3f` chunk (they share
+  it) — and since the entry needs `createRoot` on first paint, that drags all of
+  fiber + three onto the critical path and silently defeats the lazy `<Canvas>`.
+  Costed ~240 kB gzip of first-paint weight until it was caught in Phase 5.
 - `r3f-perf` is a devDependency, so it must never be reachable from a production
   import graph. `src/canvas/SceneCanvas.jsx` gates it behind
   `import.meta.env.DEV`, which the bundler statically folds to `false` in
@@ -147,11 +152,12 @@ Written down because it shapes the architecture, starting in Phase 1:
       Noise-displaced icosahedron with an iridescent glass/chrome shader,
       HDR environment reflections, preloader intro, masked hero reveal, and
       one scrubbed ScrollTrigger timeline for the Home -> Roadmap move.
-- [ ] **Phase 4 — Scroll storytelling**
-      Real section content, text reveals, pinning, section transitions.
-- [ ] **Phase 5 — Polish & performance**
-      Post-processing stack, reduced-motion and mobile fallbacks, final perf
-      pass. **Also: self-host the environment HDR** — see Open questions.
+- [ ] **Phase 4 — Scroll storytelling** _(deferred — comes after Phase 5)_
+      Real section content for Roadmap / Resources / Team, text reveals,
+      pinning, section transitions.
+- [x] **Phase 5 — Polish & performance** _(complete)_
+      Lazy-loaded canvas, device quality tiers, tier-gated post-processing,
+      thorough reduced-motion path, chunking fix, README + Vercel config.
 
 Phases 1–5 are the proposed shape based on the brief — adjust freely at each
 kickoff. Phase 0 is the only one that is settled.
