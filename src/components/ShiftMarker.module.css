@@ -1,0 +1,60 @@
+/* IOTA - the threshold marker.
+   Sits between the hero and the first content section. Its own vertical rhythm
+   is deliberately generous: the boundary needs air on both sides or it reads
+   as a divider bolted onto the top of Roadmap. */
+
+.marker {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+  padding-block: var(--s-16);
+  padding-inline: var(--gutter);
+}
+
+.rule {
+  flex: 1;
+  height: 1px;
+  /* Solid at the label, dissolving toward the page edge - a full-bleed hard
+     line would fight the SHIFT rather than mark it. Drawn outward from the
+     label by the scrubbed tween. */
+  will-change: transform;
+}
+
+.left {
+  background: linear-gradient(to right, transparent, var(--content-divider));
+  transform-origin: 100% 50%;
+}
+
+.right {
+  background: linear-gradient(to left, transparent, var(--content-divider));
+  transform-origin: 0% 50%;
+}
+
+.label {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-faint);
+  white-space: nowrap;
+}
+
+/* Echoes the hero eyebrow's diamond, which is the point - the same mark on
+   both sides of the door. */
+.diamond {
+  color: var(--c-blue);
+}
+
+@media (max-width: 640px) {
+  .marker {
+    padding-block: var(--s-12);
+    gap: var(--s-3);
+  }
+}

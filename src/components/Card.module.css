@@ -1,0 +1,83 @@
+/* IOTA - the shared card surface.
+   Raised near-black over the content room, one violet hairline, and light
+   spent only when a pointer is on it. */
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* Clips the sheen to the card. Without it the glow spills across the gap
+     into its neighbours. */
+  overflow: hidden;
+  border: 1px solid var(--c-hairline);
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--c-card) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  padding: var(--s-6);
+  /* Transform is written by useCardMotion; only the paint properties
+     transition from CSS, so the two never fight over the same channel. */
+  transition:
+    border-color var(--d-base) var(--e-out),
+    box-shadow var(--d-base) var(--e-out);
+  will-change: transform;
+}
+
+/* focus-within so tabbing into a card lights it exactly as hovering does. The
+   keyboard path gets no tilt - there is no pointer to tilt toward - but it
+   gets everything else. */
+.card:hover,
+.card:focus-within {
+  border-color: var(--c-hairline-strong);
+  box-shadow: var(--shadow-lift), var(--glow-card);
+}
+
+/* ---- The pointer sheen ---- */
+
+.sheen {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: var(--sheen-size);
+  height: var(--sheen-size);
+  /* Centres the circle on its own translated origin, so useCardMotion can
+     hand it raw card-space coordinates. */
+  margin: calc(var(--sheen-size) / -2);
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  background: radial-gradient(
+    closest-side,
+    var(--c-sheen) 0%,
+    var(--c-sheen-mid) 45%,
+    transparent 100%
+  );
+  will-change: transform, opacity;
+}
+
+/* ---- Content ---- */
+
+.content {
+  position: relative;
+  /* Above the sheen. */
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+@media (max-width: 640px) {
+  .card {
+    padding: var(--s-4);
+  }
+}
+
+/* Touch devices never get the sheen - there is no pointer to follow, and it
+   would sit frozen wherever the last tap landed. useCardMotion bails out for
+   the same reason; this is the paint half of that decision. */
+@media (hover: none), (pointer: coarse) {
+  .sheen {
+    display: none;
+  }
+}

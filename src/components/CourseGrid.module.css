@@ -1,0 +1,123 @@
+/* IOTA - the Academics course grid.
+   Same card language as the roadmap timeline: raised near-black over the
+   canvas, a violet hairline, and light spent only on hover. */
+
+.grid {
+  display: grid;
+  /* min() so a card can still shrink below its ideal width on a narrow phone
+     instead of forcing the page to scroll sideways. No media query needed. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr));
+  gap: var(--s-6);
+}
+
+/* The reveal target. GSAP writes an inline transform here, which is exactly
+   why the card's hover lift lives one level down. */
+.cell {
+  display: flex;
+  will-change: transform;
+}
+
+/* The card surface, its tilt, its sheen and its hover state all live in
+   Card.module.css now - every section in the content world shares one. What
+   is left here is the grid and what goes inside a card. */
+
+/* ---- Card head ---- */
+
+/* Credits badge. A bordered pill rather than bare text so it reads as a
+   property of the course rather than as the start of its name. */
+.credits {
+  align-self: flex-start;
+  padding: 2px var(--s-3);
+  margin-bottom: var(--s-4);
+  border: 1px solid var(--c-hairline);
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-blue);
+}
+
+.name {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.25rem;
+  line-height: 1.15;
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+  /* Only the floor: .links takes the slack with margin-block-start: auto, so
+     short names and long ones still line their pills up across a row. */
+  margin-bottom: var(--s-6);
+  /* Names run from "ML" to "Real Analysis, Numerical Analysis and Calculus" -
+     let the long ones break rather than overflow the card. */
+  overflow-wrap: break-word;
+}
+
+/* ---- Resource pills ---- */
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  /* Pushes the pill row to the bottom so rows of uneven cards still line up. */
+  margin-block-start: auto;
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid var(--c-hairline);
+}
+
+.pill {
+  position: relative;
+  /* Contains the fill's negative z-index, so it stacks behind the label
+     without falling behind the card. */
+  isolation: isolate;
+  display: inline-block;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--c-hairline);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-surface) 60%, transparent);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--c-text-mute);
+  transition:
+    color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out),
+    box-shadow var(--d-fast) var(--e-out);
+}
+
+/* The hover fill. A transform, not a background-colour change, so it wipes up
+   from the base of the pill instead of simply appearing. */
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--g-iota);
+  opacity: 0.2;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform var(--d-base) var(--e-out);
+}
+
+.pill:hover,
+.pill:focus-visible {
+  color: var(--c-text);
+  border-color: var(--c-hairline-strong);
+  box-shadow: var(--glow-violet);
+}
+
+.pill:hover::before,
+.pill:focus-visible::before {
+  transform: scaleY(1);
+}
+
+@media (max-width: 640px) {
+  .grid {
+    gap: var(--s-4);
+  }
+
+}

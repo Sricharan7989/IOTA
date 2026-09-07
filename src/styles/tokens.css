@@ -8,6 +8,7 @@
   --c-black: #05060c; /* page base */
   --c-surface: #0a0c16; /* raised panels, nav pill */
   --c-surface-2: #11141f; /* pressed / nested surface */
+  --c-card: #0a0d1a; /* raised card over the canvas */
 
   /* ---------- Palette: accent ---------- */
   --c-blue: #5d86ff;
@@ -18,8 +19,13 @@
 
   /* ---------- Palette: text ---------- */
   --c-text: #edf0ff;
-  --c-text-mute: #9aa3bf; /* secondary copy */
-  --c-text-faint: #5a6180; /* labels, metadata — decorative only */
+  /* Lifted from #9aa3bf. On --content-bg the old value measured fine against
+     WCAG but read washed out next to the accents, which is a different
+     problem from contrast and needed a different fix. */
+  --c-text-mute: #b6bfda; /* secondary copy */
+  /* Lifted from #5a6180. Still decorative-only per §10 - it is simply no
+     longer muddy. */
+  --c-text-faint: #7b83a6; /* labels, metadata — decorative only */
 
   /* ---------- Lines & glows ---------- */
   --c-hairline: rgba(157, 123, 255, 0.16); /* every border in the system */
@@ -31,7 +37,156 @@
   /* The particle field is bright in places; these keep DOM text readable
      without laying an opaque panel over the 3D. */
   --c-scrim: rgba(5, 6, 12, 0.72);
+  /* Framing vignette painted behind the canvas. Pure black so it can darken
+     *below* the page base, which --c-black alone cannot do. */
+  --c-vignette-mid: rgba(0, 0, 0, 0.5);
+  --c-vignette-edge: rgba(0, 0, 0, 0.86);
+  /* Barely-there cool wash at the very bottom of frame. */
+  --c-horizon: rgba(93, 134, 255, 0.055);
   --shadow-text: 0 2px 30px rgba(5, 6, 12, 0.9);
+
+  /* ---------- The content world, below the SHIFT ---------- */
+  /* DESIGN.md §7. Everything below the hero is a different room: a deeper
+     base, one soft top light, and a faint dot matrix. No particles. */
+
+  /* Deeper than --c-black on purpose - crossing the boundary has to be felt,
+     not merely announced. */
+  --content-bg: #07080f;
+
+  --content-glow-violet: rgba(157, 123, 255, 0.15);
+  --content-glow-blue: rgba(93, 134, 255, 0.09);
+  /* The composed room's single light source, anchored just above the top of
+     the frame so every content screen gets the same wash. Atmosphere, not a
+     spotlight: at these alphas it is felt rather than seen. */
+  --content-glow: radial-gradient(
+    130% 60% at 50% -10%,
+    var(--content-glow-violet) 0%,
+    var(--content-glow-blue) 38%,
+    transparent 74%
+  );
+
+  /* Dot matrix. --grid-op is the entire intensity control - keep it inside
+     0.03..0.05. It sits behind body copy, so anything stronger starts eating
+     contrast, which DESIGN.md §10 does not allow. */
+  --grid-op: 0.05;
+  --grid-size: 34px;
+  --grid-dot: rgba(157, 123, 255, 0.85);
+
+  /* ---------- Section masthead ---------- */
+  /* The big name is the first thing you should see on landing in a section, so
+     it gets the one gradient moment per section that DESIGN.md §2 allows, plus
+     a glow shaped to the letterforms. */
+  --c-heading-glow: rgba(93, 134, 255, 0.45);
+  /* Layered text-shadows rather than a drop-shadow filter: a filtered ancestor
+     forces its own render surface, and anything using background-clip: text
+     inside one paints as nothing at all. Text-shadow has no such problem. */
+  --glow-heading:
+    0 0 26px rgba(93, 134, 255, 0.55), 0 0 64px rgba(157, 123, 255, 0.4),
+    0 2px 30px rgba(5, 6, 12, 0.9);
+
+  /* Section dividers, drawn in on scroll. Brighter than --content-divider,
+     which stays the value for anything static. */
+  --g-divider: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--c-blue) 18%,
+    var(--c-violet) 62%,
+    transparent 100%
+  );
+
+  /* ---------- The blaze ---------- */
+  /* DESIGN.md §2, "The blaze ramp". The roadmap's one signature effect: a track heats up as it
+     descends, so difficulty is something you SEE before you read a word.
+
+     Three tiers, matching the three levels in data/roadmaps.js exactly. The
+     ramp is the whole point - each tier only means anything next to the other
+     two, so never retune one alone. */
+
+  --c-blaze-cool: #3f63c8; /* Beginner - dim, receding, cold */
+  --c-blaze-mid: #5d86ff; /* Intermediate - the accent blue, lit */
+  --c-blaze-hot: #7fd3ff; /* Advanced - cyan, on the edge of white */
+  --c-blaze-white: #eaf7ff; /* the hottest pixel on the page */
+
+  /* The spine's vertical ramp. Weighted late: two thirds of the line is still
+     cool, so the last third genuinely reads as arriving somewhere. */
+  --g-blaze: linear-gradient(
+    to bottom,
+    var(--c-blaze-cool) 0%,
+    var(--c-blaze-mid) 46%,
+    var(--c-blaze-hot) 82%,
+    var(--c-blaze-white) 100%
+  );
+
+  /* The bottom-weighted heat haze layered over the spine. Transparent for the
+     first half, so it adds nothing until the track is already hot. */
+  --g-blaze-heat: linear-gradient(
+    to bottom,
+    transparent 48%,
+    color-mix(in srgb, var(--c-blaze-hot) 55%, transparent) 78%,
+    var(--c-blaze-white) 100%
+  );
+
+  /* Halos, one per tier. Radial and hollow in the middle so they glow AROUND
+     whatever they sit behind rather than washing over it. */
+  --halo-cool: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--c-blaze-cool) 40%, transparent),
+    transparent 100%
+  );
+  --halo-mid: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--c-blaze-mid) 55%, transparent),
+    transparent 100%
+  );
+  --halo-hot: radial-gradient(
+    closest-side,
+    color-mix(in srgb, var(--c-blaze-white) 45%, transparent),
+    color-mix(in srgb, var(--c-blaze-hot) 40%, transparent) 45%,
+    transparent 100%
+  );
+
+  /* Node glows. Same three steps, as box-shadows. */
+  --glow-cool: 0 0 14px rgba(63, 99, 200, 0.4);
+  --glow-mid: 0 0 26px rgba(93, 134, 255, 0.55);
+  --glow-hot:
+    0 0 30px rgba(127, 211, 255, 0.7), 0 0 60px rgba(127, 211, 255, 0.35);
+
+  /* ---------- Interaction ---------- */
+  /* DESIGN.md §8. Everything the content world does under a pointer resolves
+     to one of these, so all four sections react with the same hand. */
+
+  /* Card tilt, in degrees at the corner. Past ~8 the card stops reading as a
+     surface catching light and starts reading as a toy. */
+  --tilt-max: 7deg;
+  /* Lift on hover, in px. Paired with --shadow-lift; one without the other
+     reads as a glitch. */
+  --lift: 6;
+
+  /* The sheen that follows the pointer across a card. A fixed-size circle that
+     is translated, never re-gradiented - see Card.module.css. */
+  --sheen-size: 20rem;
+  --c-sheen: rgba(157, 123, 255, 0.22);
+  --c-sheen-mid: rgba(93, 134, 255, 0.11);
+
+  --shadow-lift: 0 22px 60px rgba(0, 0, 0, 0.55);
+  --glow-card: 0 0 44px rgba(93, 134, 255, 0.26);
+
+  /* The pointer glow on the content backdrop. An order of magnitude fainter
+     than a card's sheen: it is the room noticing you, not a light you carry. */
+  --pointer-glow-size: 46rem;
+  --c-pointer-glow: rgba(93, 134, 255, 0.105);
+  --c-pointer-glow-mid: rgba(157, 123, 255, 0.055);
+
+  /* Custom cursor. The dot tracks 1:1; the ring lags and swells over anything
+     interactive. */
+  --cursor-dot: 6px;
+  --cursor-ring: 32px;
+  --cursor-ring-grown: 62px;
+
+  /* Section dividers in the content world. Softer than --c-hairline because
+     these run the full width of the page, and a full-bleed line reads heavier
+     than a short one at the same alpha. */
+  --content-divider: rgba(157, 123, 255, 0.14);
 
   /* ---------- Signature gradient ---------- */
   --g-iota: linear-gradient(120deg, var(--c-blue) 0%, var(--c-violet) 100%);
@@ -44,6 +199,9 @@
   /* ---------- Type scale (fluid) ---------- */
   --t-hero: clamp(4rem, 15vw, 11rem);
   --t-h1: clamp(2.5rem, 6vw, 5rem);
+  /* Content section titles. Bigger than --t-h1 on purpose: each section below
+     the hero has to open like a title card, not like a paragraph heading. */
+  --t-section: clamp(4rem, 9vw, 9rem);
   --t-h2: clamp(1.75rem, 3vw, 2.75rem);
   --t-body: clamp(1rem, 1.1vw, 1.125rem);
   --t-label: 0.75rem;
@@ -80,8 +238,14 @@
   --e-soft: cubic-bezier(0.33, 1, 0.68, 1);
 
   /* ---------- Layers ---------- */
+  /* Behind the canvas. #root is `isolation: isolate`, so a negative z-index
+     stays inside the app's stacking context instead of falling behind body. */
+  --z-backdrop: -1;
   --z-canvas: 0;
   --z-content: 1;
   --z-nav: 10;
   --z-overlay: 100;
+  /* Above the overlay: it stands in for the native cursor, so nothing may
+     ever paint over it. */
+  --z-cursor: 200;
 }

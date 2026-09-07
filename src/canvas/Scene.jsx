@@ -2,29 +2,49 @@
    Everything that lives inside the <Canvas>, composed in one place. SceneCanvas
    stays a pure canvas host; this file is the scene graph.
 
-   This is also where the quality tier is applied: particle count, which
-   post-processing passes run, and whether the HDR environment is fetched.
+   ==========================================================================
+   ACTIVE HERO: <EnergyMass /> — the curl-noise particle mass.
 
-   Draw order: the model is opaque and writes depth, the warp is additive and
-   does not. three renders opaque before transparent, so warp particles behind
-   the model are correctly occluded while the ones nearer the camera still
-   streak across in front of it — which is what keeps the warp reading as
-   *around* the hero rather than merely behind it (DESIGN.md §6). */
+   The model hero is NOT deleted, only unmounted. To revert instantly:
+     1. swap <EnergyMass/> (and its tuner) below for <HeroModel/>
+     2. re-add <HeroLighting /> and the <Environment> block — the model uses
+        MeshStandardMaterial and needs both; the particle mass is unlit and
+        ignores them entirely, so mounting them now would cost a 1.7 MB HDR
+        fetch to light nothing.
+   HeroModel.jsx, HeroLighting.jsx and the shader-blob centerpiece all remain in
+   the repo and tree-shake out of the bundle while unreferenced.
+   ==========================================================================
+
+   Draw order: both particle systems are additive with depthWrite off, so they
+   blend into each other rather than occluding — which is what lets the warp
+   read as *around* the hero rather than merely behind it (DESIGN.md §6). */
 import { Suspense, lazy, useEffect } from 'react'
 import { useThree } from '@react-three/fiber'
-import { Environment } from '@react-three/drei'
 import WarpField from './WarpField'
-import HeroModel from './HeroModel'
-import HeroLighting from './HeroLighting'
+import EnergyMass, { ENERGY_DEFAULTS } from './EnergyMass'
+import GlowHalo from './GlowHalo'
+import Debris, { DEBRIS_DEFAULTS } from './Debris'
 import CameraRig from './CameraRig'
 import Effects from './Effects'
-import CanvasErrorBoundary from './CanvasErrorBoundary'
+import { SHOW_DEV } from '../lib/devtools'
 
-// Dev-only Leva tuner. `import.meta.env.DEV` folds to false in production, so
-// the bundler drops this dynamic import and leva never enters the graph.
-const WarpFieldTuner = import.meta.env.DEV
-  ? lazy(() => import('./WarpFieldTuner'))
-  : null
+// Leva tuners, gated by the single SHOW_DEV switch in lib/devtools.js.
+//
+// `import.meta.env.DEV &&` MUST stay written out literally here. It is not
+// redundant with SHOW_DEV: the bundler only dead-code-eliminates a dynamic
+// import when the condition is statically false *at this call site*, and a
+// constant imported from another module does not give it that. Reduce these
+// to `SHOW_DEV ? ...` and leva (184 kB) plus r3f-perf ship to production.
+//
+// With the flag off in dev these are never rendered, so leva is not even
+// fetched — while the tuner files and their useControls hooks stay exactly as
+// they were, ready for the flag to be flipped back.
+const DEV_UI = import.meta.env.DEV && SHOW_DEV
+
+const WarpFieldTuner = DEV_UI ? lazy(() => import('./WarpFieldTuner')) : null
+const EnergyMassTuner = DEV_UI ? lazy(() => import('./EnergyMassTuner')) : null
+const AtmosphereTuner = DEV_UI ? lazy(() => import('./AtmosphereTuner')) : null
+const EffectsTuner = DEV_UI ? lazy(() => import('./EffectsTuner')) : null
 
 export default function Scene({ quality }) {
   const invalidate = useThree((state) => state.invalidate)
@@ -33,26 +53,21 @@ export default function Scene({ quality }) {
   // changes the scene outside the render loop has to ask for a frame.
   useEffect(() => {
     invalidate()
-  }, [invalidate, quality.particles, quality.reducedMotion])
+  }, [
+    invalidate,
+    quality.particles,
+    quality.heroParticles,
+    quality.debrisCount,
+    quality.reducedMotion,
+  ])
 
   return (
     <>
       <CameraRig reducedMotion={quality.reducedMotion} />
 
-      <HeroLighting />
-
-      {/* Real reflections for the model's standard material. Unlike the old
-          custom-shader centerpiece, MeshStandardMaterial consumes
-          scene.environment directly, so <Environment> is the right API here.
-          Top tier only — it is a ~1.7 MB CDN fetch, and the light rig already
-          carries the look without it. */}
-      {quality.hdrEnvironment ? (
-        <CanvasErrorBoundary>
-          <Suspense fallback={null}>
-            <Environment preset="night" background={false} />
-          </Suspense>
-        </CanvasErrorBoundary>
-      ) : null}
+      {/* Behind the mass: the light source it is silhouetted against. Drawn
+          first so the additive particle systems stack on top of it. */}
+      {!AtmosphereTuner ? <GlowHalo reducedMotion={quality.reducedMotion} /> : null}
 
       {WarpFieldTuner ? (
         <Suspense fallback={null}>
@@ -68,17 +83,49 @@ export default function Scene({ quality }) {
         />
       )}
 
-      {/* Suspends on the GLB. The preloader covers this on a normal load; the
-          warp keeps rendering behind the fallback either way. */}
-      <Suspense fallback={null}>
-        <HeroModel reducedMotion={quality.reducedMotion} />
-      </Suspense>
+      {EnergyMassTuner ? (
+        <Suspense fallback={null}>
+          <EnergyMassTuner
+            count={quality.heroParticles}
+            reducedMotion={quality.reducedMotion}
+          />
+        </Suspense>
+      ) : (
+        <EnergyMass
+          count={quality.heroParticles}
+          bokehScale={ENERGY_DEFAULTS.bokehScale * quality.bokehScale}
+          reducedMotion={quality.reducedMotion}
+        />
+      )}
 
-      <Effects
-        bloom={quality.bloom}
-        chromatic={quality.chromatic}
-        vignette={quality.vignette}
-      />
+      {/* In front of and around the mass: parallax and a sense of scale. */}
+      {AtmosphereTuner ? (
+        <Suspense fallback={null}>
+          <AtmosphereTuner reducedMotion={quality.reducedMotion} />
+        </Suspense>
+      ) : (
+        <Debris
+          count={quality.debrisCount}
+          bokehScale={DEBRIS_DEFAULTS.bokehScale * quality.bokehScale}
+          reducedMotion={quality.reducedMotion}
+        />
+      )}
+
+      {EffectsTuner ? (
+        <Suspense fallback={null}>
+          <EffectsTuner
+            bloom={quality.bloom}
+            chromatic={quality.chromatic}
+            vignette={quality.vignette}
+          />
+        </Suspense>
+      ) : (
+        <Effects
+          bloom={quality.bloom}
+          chromatic={quality.chromatic}
+          vignette={quality.vignette}
+        />
+      )}
     </>
   )
 }

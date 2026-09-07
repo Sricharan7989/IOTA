@@ -86,6 +86,14 @@ ol {
   isolation: isolate;
 }
 
+/* Set by <Cursor> on mount, and only when it has actually decided to render:
+   never on coarse pointers, never under reduced motion. So if the custom
+   cursor is not there, the native one still is. */
+html[data-custom-cursor],
+html[data-custom-cursor] * {
+  cursor: none;
+}
+
 ::selection {
   background: var(--c-blue);
   color: var(--c-black);

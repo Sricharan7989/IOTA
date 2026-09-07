@@ -1,0 +1,25 @@
+/* IOTA - Academics section. */
+
+/* Mono counter above the grid. Echoes the section index label so the two read
+   as the same family of metadata. */
+.count {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-8);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-faint);
+}
+
+.number {
+  color: var(--c-violet);
+}
+
+.rule {
+  width: var(--s-8);
+  height: 1px;
+  background: var(--c-hairline-strong);
+}

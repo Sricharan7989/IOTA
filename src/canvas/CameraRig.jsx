@@ -13,7 +13,7 @@ import { dampFactor } from '../lib/math'
 
 export default function CameraRig({
   restZ = 6,
-  dollyZ = 5.1,
+  dollyZ = 4.4,
   parallax = 0.18,
   reducedMotion = false,
 }) {

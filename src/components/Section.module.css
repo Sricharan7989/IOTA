@@ -1,0 +1,151 @@
+/* IOTA - shared section shell.
+   The layout primitive every section below the hero is built on - which is to
+   say, every section in the content world. */
+
+.section {
+  position: relative;
+  min-height: 100svh;
+  /* DESIGN.md 4: generous vertical rhythm between sections. */
+  padding-block: var(--s-24);
+  padding-inline: var(--gutter);
+}
+
+/* Hairline dividers between content sections. Full-bleed, so they read as the
+   room's structure rather than as a box around any one section, and drawn in
+   from the left as the section arrives rather than sitting there.
+
+   Hidden by default and shown only by `.section + .section`: the FIRST content
+   section is preceded by <ShiftMarker>, not by a section, so it is skipped
+   here and the marker's own rule serves as the hero -> content boundary. Two
+   lines that close together would read as a mistake. */
+.divider {
+  display: none;
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline: 0;
+  height: 1px;
+  background: var(--g-divider);
+  /* The line is a hairline; the glow is what makes it read as lit rather than
+     as a border someone forgot to remove. */
+  box-shadow: 0 0 12px var(--c-heading-glow);
+  opacity: 0.75;
+  transform-origin: 0% 50%;
+  will-change: transform;
+}
+
+.section + .section > .divider {
+  display: block;
+}
+
+.inner {
+  position: relative;
+  width: 100%;
+  max-width: var(--max-w);
+  margin-inline: auto;
+}
+
+/* The scrim that used to live here is gone. It existed to keep copy legible
+   over the warp, and since the SHIFT the warp does not reach this far down the
+   page - there is nothing left to scrim against. Over --content-bg it only
+   muddied the top glow. The hero still has its own, where the mass genuinely
+   does sit behind the type. */
+
+/* ---- Mono index label ---- */
+
+.index {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-6);
+  font-family: var(--f-mono);
+  /* A step above --t-label: this sits under a 144px name and has to read as a
+     label for it rather than as fine print. */
+  font-size: 0.875rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.number {
+  color: var(--c-blue);
+}
+
+/* Drawn out from its start by useSectionMotion. transform-origin matters more
+   than it looks: from the centre it reads as a line growing, from the start it
+   reads as a line being struck. */
+.rule {
+  width: var(--s-8);
+  height: 1px;
+  background: var(--g-iota);
+  box-shadow: var(--glow-blue);
+  transform-origin: 0% 50%;
+  will-change: transform;
+}
+
+/* The eyebrow reads as a label for the big name below it, so it gets the
+   brighter of the two secondary greys - at --c-text-faint it disappeared next
+   to a 120px heading. */
+.name {
+  color: var(--c-text-mute);
+}
+
+/* ---- Heading ---- */
+
+/* The section's title card. The biggest type below the hero, on purpose - the
+   mono index above it is metadata, and metadata alone is not an opening.
+
+   ==========================================================================
+   DO NOT put a `filter` on this element, and do not give .line a
+   `background-clip: text` fill.
+
+   Both were here once, together, and the heading rendered as NOTHING: a
+   filtered, layer-promoted ancestor forces its own render surface, and a
+   text-clipped background inside one is not captured - so the text painted
+   fully transparent while still taking its full height in layout. The result
+   was a large blank gap where every section name should have been.
+
+   The glow is layered text-shadows instead. They cost no render surface,
+   need no filter, and cannot make the text disappear.
+   ========================================================================== */
+.heading {
+  position: relative;
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: var(--t-section);
+  /* Tighter than --t-h1's 1.02: at this size the extra leading reads as a gap
+     rather than as line spacing. */
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+  color: var(--c-text);
+  text-shadow: var(--glow-heading);
+  margin-bottom: var(--s-6);
+  /* useSectionMotion parallaxes this element; the masked slide-up inside runs
+     on .line. Two transforms, two nodes, so neither can clobber the other. */
+  will-change: transform;
+}
+
+.mask {
+  display: block;
+  overflow: hidden;
+  /* Slack so descenders are not shaved off by the mask. */
+  padding-block: 0.12em;
+  margin-block: -0.12em;
+}
+
+.line {
+  display: block;
+  will-change: transform;
+}
+
+/* No gradient fill here. `color: transparent` has exactly one failure mode and
+   it is a heading nobody can see - which is what happened. The blue-violet now
+   comes from the glow around solid text, which reads as the same accent and
+   can never paint to nothing. */
+
+/* ---- Optional intro blurb ---- */
+
+.blurb {
+  max-width: 62ch;
+  color: var(--c-text-mute);
+  margin-bottom: var(--s-12);
+}

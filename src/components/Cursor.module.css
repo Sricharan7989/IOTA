@@ -1,0 +1,48 @@
+/* IOTA - the custom cursor.
+   Two fixed elements above everything, translated by GSAP. Both are centred on
+   their own origin with a negative margin so the JS can hand them raw viewport
+   coordinates. */
+
+.dot,
+.ring {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  z-index: var(--z-cursor);
+  border-radius: 50%;
+  pointer-events: none;
+  /* Shown by JS on the first pointermove, so it never appears parked in the
+     top-left corner before the pointer has been anywhere. */
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+.dot {
+  width: var(--cursor-dot);
+  height: var(--cursor-dot);
+  margin: calc(var(--cursor-dot) / -2);
+  background: var(--c-glow);
+}
+
+.ring {
+  width: var(--cursor-ring);
+  height: var(--cursor-ring);
+  margin: calc(var(--cursor-ring) / -2);
+  border: 1px solid var(--c-hairline-strong);
+  /* Only the ring transitions size and colour; its position is GSAP's. */
+  transition:
+    width var(--d-base) var(--e-out),
+    height var(--d-base) var(--e-out),
+    margin var(--d-base) var(--e-out),
+    border-color var(--d-base) var(--e-out),
+    background-color var(--d-base) var(--e-out);
+}
+
+/* Over anything interactive. */
+.grown {
+  width: var(--cursor-ring-grown);
+  height: var(--cursor-ring-grown);
+  margin: calc(var(--cursor-ring-grown) / -2);
+  border-color: var(--c-blue);
+  background: color-mix(in srgb, var(--c-blue) 10%, transparent);
+}

@@ -1,38 +1,52 @@
 /* IOTA — hero section.
-   Corner-anchored mono labels around a giant display heading, with the model
-   holding the centre-right of frame. Copy sits low-left so it never fights the
-   centerpiece for the same pixels. */
+   Corner-anchored composition: four blocks pinned to the corners of the frame
+   with the mass owning the whole centre. The type frames the image rather than
+   sitting beside it. */
 
 .section {
   position: relative;
   min-height: 100svh;
-  display: flex;
-  align-items: stretch;
-  padding-block: calc(var(--nav-h) + var(--s-8)) var(--s-12);
+  display: grid;
+  /* Two rows that hug top and bottom; the centre is deliberately empty and
+     belongs to the centerpiece. */
+  grid-template-rows: auto 1fr auto;
+  padding-block: calc(var(--nav-h) + var(--s-6)) var(--s-12);
   padding-inline: var(--gutter);
 }
 
 .inner {
-  position: relative;
+  display: contents;
+}
+
+.topRow,
+.bottomRow {
   display: flex;
-  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--s-8);
   width: 100%;
   max-width: var(--max-w);
   margin-inline: auto;
 }
 
-/* Scrim keeps the copy readable over the warp and the model's glow without
-   putting an opaque panel in front of the 3D. */
-.inner::before {
+.bottomRow {
+  align-items: flex-end;
+}
+
+/* Scrim behind the bottom corners, where the type is largest and the mass is
+   brightest. Sits behind the text but above the canvas. */
+.bottomRow::before {
   content: '';
   position: absolute;
-  inset: -30% -25% -20% -25%;
+  inset-inline: -25%;
+  inset-block-end: -20%;
+  block-size: 62%;
   z-index: -1;
   pointer-events: none;
-  background: radial-gradient(
-    54% 58% at 22% 62%,
+  background: linear-gradient(
+    to top,
     var(--c-scrim) 0%,
-    transparent 74%
+    transparent 100%
   );
 }
 
@@ -41,9 +55,9 @@
 .mask {
   display: block;
   overflow: hidden;
-  /* Vertical slack so descenders and glow are not shaved off by the mask. */
-  padding-block: 0.12em;
-  margin-block: -0.12em;
+  /* Vertical slack so descenders and the italic overhang are not shaved off. */
+  padding-block: 0.14em;
+  margin-block: -0.14em;
 }
 
 .line {
@@ -51,61 +65,57 @@
   will-change: transform;
 }
 
-/* ---- Mono microlabels ---- */
+/* ---- Mono eyebrow (top-left) ---- */
 
-.label {
+.eyebrow {
   font-family: var(--f-mono);
   font-size: var(--t-label);
   letter-spacing: var(--tr-label);
   text-transform: uppercase;
-  color: var(--c-text-faint);
-}
-
-.eyebrow {
   color: var(--c-text-mute);
+  text-shadow: var(--shadow-text);
 }
 
 .diamond {
   color: var(--c-violet);
 }
 
-/* Top row: eyebrow left, first microlabel right. */
-.topRow {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--s-6);
-}
+/* ---- Bottom-left: the statement ---- */
 
-/* Bottom row: second microlabel left, scroll cue right. */
-.bottomRow {
-  display: flex;
-  align-items: flex-end;
-  justify-content: space-between;
-  gap: var(--s-6);
-  margin-top: var(--s-8);
-}
-
-/* ---- Headline ---- */
-
-.headingBlock {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  /* Held to the left so the model owns the centre-right of the frame. */
-  max-width: min(18ch, 62%);
-}
-
-.heading {
+.statement {
   font-family: var(--f-display);
   font-weight: 700;
-  font-size: var(--t-hero);
-  line-height: 0.88;
-  letter-spacing: -0.03em;
+  font-size: clamp(3rem, 11vw, 9rem);
+  line-height: 0.86;
+  letter-spacing: -0.035em;
   text-transform: uppercase;
   color: var(--c-text);
   text-shadow: var(--shadow-text);
+}
+
+/* "WE ARE" is the quiet half of the pair — smaller, so "IOTA" lands. */
+.statementLead {
+  display: block;
+  font-size: clamp(1rem, 2.6vw, 2rem);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  color: var(--c-text-mute);
+  margin-bottom: var(--s-2);
+}
+
+/* ---- Bottom-right: the description ---- */
+
+.description {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1rem, 2.1vw, 1.75rem);
+  line-height: 1.18;
+  letter-spacing: -0.015em;
+  text-align: right;
+  text-transform: uppercase;
+  color: var(--c-text);
+  text-shadow: var(--shadow-text);
+  max-width: 22ch;
 }
 
 /* The accent word: italic, filled with the signature gradient. */
@@ -115,64 +125,49 @@
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
-  /* A gradient fill cannot carry a text-shadow, so the legibility scrim under
-     it does that job instead. */
+  /* A gradient fill cannot carry a text-shadow; the scrim below does that job. */
   text-shadow: none;
-  /* Italic Chakra Petch overhangs its box; without this the leading edge of
+  /* Italic Chakra Petch overhangs its box — without this the leading edge of
      the glyph gets clipped by the mask. */
-  padding-inline-end: 0.08em;
-}
-
-/* ---- Scroll cue ---- */
-
-.scrollCue {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--s-2);
-  color: var(--c-text-mute);
-  white-space: nowrap;
-}
-
-.arrow {
-  display: inline-block;
-  color: var(--c-blue);
-  animation: nudge 2.2s var(--e-in-out) infinite;
-}
-
-@keyframes nudge {
-  0%,
-  100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(4px);
-    opacity: 0.5;
-  }
+  padding-inline: 0.06em;
+  margin-inline: -0.06em;
 }
 
 @media (max-width: 900px) {
-  .headingBlock {
-    max-width: 100%;
-    justify-content: center;
+  .topRow,
+  .bottomRow {
+    gap: var(--s-4);
   }
 
-  .heading {
-    font-size: clamp(2.75rem, 13vw, 5rem);
+  .description {
+    font-size: clamp(0.8125rem, 3.2vw, 1rem);
+    max-width: 16ch;
   }
 
-  .inner::before {
-    inset: -30% -30%;
-    background: radial-gradient(
-      74% 60% at 50% 55%,
-      var(--c-scrim) 0%,
-      transparent 78%
-    );
+  .statement {
+    font-size: clamp(2.5rem, 16vw, 5rem);
   }
+}
 
-  /* The two microlabels stop being "opposite corners" on a narrow screen and
-     just become clutter next to the scroll cue. */
-  .cornerLabel {
-    display: none;
-  }
+/* ---- Second statement (revealed on scroll, not by the intro) ---- */
+
+.secondWrap {
+  display: grid;
+  place-items: center;
+  /* Sits in the empty centre row, over the mass. Non-interactive so it never
+     blocks the cursor disturbance underneath it. */
+  pointer-events: none;
+}
+
+.second {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: clamp(1.125rem, 2.8vw, 2.25rem);
+  line-height: 1.14;
+  letter-spacing: -0.02em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--c-text);
+  text-shadow: var(--shadow-text);
+  max-width: 20ch;
 }

@@ -1,0 +1,7 @@
+/* IOTA - Roadmap section. */
+
+.trackBlurb {
+  max-width: 62ch;
+  margin-bottom: var(--s-12);
+  color: var(--c-text-mute);
+}

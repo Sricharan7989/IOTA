@@ -7,7 +7,8 @@ export const SECTIONS = [
   { id: 'home', index: '01', label: 'Home', heading: 'IOTA' },
   { id: 'roadmap', index: '02', label: 'Roadmap', heading: 'Roadmap' },
   { id: 'resources', index: '03', label: 'Resources', heading: 'Resources' },
-  { id: 'team', index: '04', label: 'Team', heading: 'Team' },
+  { id: 'academics', index: '04', label: 'Academics', heading: 'Academics' },
+  { id: 'team', index: '05', label: 'Team', heading: 'Team' },
 ]
 
 export function getSection(id) {

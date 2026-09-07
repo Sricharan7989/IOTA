@@ -52,8 +52,8 @@ It is a **club**, not a product. Copy and CTAs describe something people
 | Token            | Value     | Use                                   |
 | ---------------- | --------- | ------------------------------------- |
 | `--c-text`       | `#EDF0FF` | Headings and body. Never pure white.  |
-| `--c-text-mute`  | `#9AA3BF` | Secondary copy, inactive nav.         |
-| `--c-text-faint` | `#5A6180` | Labels, counters. **Decorative only** — fails contrast for body copy. |
+| `--c-text-mute`  | `#B6BFDA` | Secondary copy, inactive nav.         |
+| `--c-text-faint` | `#7B83A6` | Labels, counters. **Decorative only** — do not let it carry meaning alone. |
 
 ### Lines & glows
 
@@ -74,6 +74,51 @@ chrome reads as designed rather than defaulted.
 For: the active nav indicator, the scroll progress line, one highlighted phrase
 per section, and the ramp the centerpiece's iridescence samples. **Never** as a
 large background fill.
+
+### `background-clip: text` — the rule
+
+**Never combine a `background-clip: text` fill with a `filter` on any
+ancestor.** A filtered element gets its own render surface, and a text-clipped
+background inside one is not captured: the text paints as nothing while still
+taking its full height in layout. It looks like a missing element, not like a
+styling bug, which is why it survived two rounds of review here.
+
+Section titles used to do exactly this and rendered as a blank gap. They are
+now solid `--c-text` with a layered `text-shadow` glow, which reads as the same
+blue-violet accent and has no such failure mode. If you want gradient text
+anywhere, keep every ancestor filter-free and `will-change`-free, and prove it
+renders before shipping it.
+
+### The blaze ramp
+
+The roadmap's signature effect, and the only place in the system where colour
+carries *meaning* rather than emphasis. A track heats up as it descends, so a
+reader knows how hard a stage is before reading a word of it.
+
+| Tier         | Token             | Reads as                        |
+| ------------ | ----------------- | ------------------------------- |
+| Beginner     | `--c-blaze-cool`  | Dim, receding, cold.            |
+| Intermediate | `--c-blaze-mid`   | Lit. The accent blue.           |
+| Advanced     | `--c-blaze-hot`   | Cyan, on the edge of white.     |
+| —            | `--c-blaze-white` | The hottest pixel on the page.  |
+
+- **Never retune one tier alone.** Each only means anything next to the other
+  two; changing one flattens the ramp, which is the entire effect.
+- The ramp is weighted late (`--g-blaze` holds cool through 46%) so arriving at
+  Advanced genuinely reads as arriving somewhere.
+- Four things express it — spine, node, card halo, level tag — all keyed off
+  **one** `data-level` attribute, so they cannot drift apart.
+- Fire is built from **two halo layers on periods that do not divide into each
+  other**. Two soft glows that never line up read as flame; one reads as a
+  throb. Both animate `opacity` and `transform` only — an animated
+  `box-shadow` or `filter` would be a repaint every frame, and §5 does not
+  allow it.
+- This is the exception §1 permits to "never more than one glowing thing at a
+  time": there is still only one *blazing* thing: the rest of the ramp is
+  deliberately quieter than it.
+- `prefers-reduced-motion` keeps the entire ramp — gradients, halos, tag
+  colours, node glows — and drops only the flicker. Heat is colour, not
+  movement.
 
 ### 3D colour notes
 
@@ -106,7 +151,8 @@ camera.
 | Token       | Range             | Use                     |
 | ----------- | ----------------- | ----------------------- |
 | `--t-hero`  | 4rem → 11rem      | Hero display heading + preloader wordmark. |
-| `--t-h1`    | 2.5rem → 5rem     | Section titles.         |
+| `--t-h1`    | 2.5rem → 5rem     | Sub-headings that are not section titles. |
+| `--t-section` | 3.5rem → 7.5rem | Content section titles. |
 | `--t-h2`    | 1.75rem → 2.75rem | Sub-headings.           |
 | `--t-body`  | 1rem → 1.125rem   | Paragraphs.             |
 | `--t-label` | 0.75rem           | Mono eyebrows.          |
@@ -120,7 +166,7 @@ camera.
   scrim behind it does that job instead.
 - Mono labels always get `--tr-label` (`0.22em`) **and** uppercase. No exceptions.
 - Body copy caps at **62ch**. Never full-bleed paragraphs.
-- Line height: 0.92 hero, 1.05 headings, 1.6 body.
+- Line height: 0.92 hero, 0.95 section titles, 1.05 headings, 1.6 body.
 - Three families is the ceiling. Do not introduce a fourth.
 
 ---
@@ -191,13 +237,123 @@ Motion is the product. Everything moves; nothing is fast.
 
 ---
 
-## 7. Component conventions
+## 7. Two worlds, and the SHIFT between them
+
+The page is two rooms, and the split is the strongest art-direction decision in
+it. Above the fold is the **cinematic** room: one WebGL layer, particles, bloom,
+a mass of light. Below it is the **content** room: static, composed, no
+particles at all. Crossing between them is a deliberate moment, not a scroll
+artifact.
+
+### The content room
+
+| Token                | Value                            | Use                        |
+| -------------------- | -------------------------------- | -------------------------- |
+| `--content-bg`       | `#07080F`                        | Base below the hero.       |
+| `--content-glow`     | radial, violet -> blue -> clear  | One soft top light.        |
+| `--grid-op`          | `0.04`                           | Dot-matrix intensity.      |
+| `--grid-size`        | `34px`                           | Dot pitch.                 |
+| `--grid-dot`         | `rgba(157, 123, 255, .85)`       | Dot colour, before op.     |
+| `--content-divider`  | `rgba(157, 123, 255, .14)`       | Full-bleed section rules.  |
+
+- `--content-bg` is **deeper than `--c-black`**, not lighter. The composed room
+  is the darker of the two, which is why arriving in it feels like the noise
+  stopping.
+- The glow is anchored just above the top of the frame and is **fixed**, so
+  every content screen gets the same wash rather than one lit screen and then
+  nothing. Atmosphere, not a spotlight - if you can point at it, turn it down.
+- The dot matrix is the only texture in the system. It is **behind all text**,
+  never over it, so it cannot touch contrast. `--grid-op` is the single dial;
+  above `0.05` it starts reading as noise.
+- Cards do not change across the boundary: `--c-card` with `--c-hairline`, and
+  the blue-violet glow on hover. Same components, different room.
+
+### The SHIFT
+
+One boundary, written once in `lib/shift.js` and read by all three parties -
+the canvas layer, the content backdrop, and the marker on the threshold.
+
+- Driven by scroll, scrubbed, and therefore **reversible by construction**:
+  scrolling up un-plays it exactly as it played.
+- The two ranges intentionally differ. The composed room starts arriving at
+  35% of the hero's exit; the cinematic room only starts leaving at 45%. The
+  overlap in the middle is the dissolve. Matching ranges would read as a
+  crossfade between two flat images.
+- The 3D **recedes** rather than switching off: it dims and pulls back to
+  `0.94` at the same time, because a room you are leaving gets smaller.
+- Below the hero the canvas stops rendering entirely. The 3D is the hero's and
+  nothing else's - which is an art-direction rule first and a performance win
+  second.
+- `prefers-reduced-motion` gets no dissolve at all. The rooms swap at one
+  point, `bottom center`, and the composed room is simply present from there
+  on. Same two states, one step instead of a scrub.
+
+---
+
+## 8. Interaction
+
+Motion on entry is choreography; motion under a pointer is **feedback**. The
+content world has four sections and they must all react with the same hand, or
+the page reads as four sites wearing one palette. Everything below resolves to
+a token, and every token is shared.
+
+### The card is the unit
+
+`components/Card.jsx` is the one surface: roadmap stage, course, resource, team
+member. It owns the raised ground, the violet hairline, and all three pointer
+responses, so no section can invent its own.
+
+| Response | Token          | Note                                          |
+| -------- | -------------- | --------------------------------------------- |
+| Tilt     | `--tilt-max`   | 7deg at the corner. Past ~8 it becomes a toy.  |
+| Lift     | `--lift`       | Paired with `--shadow-lift`; never alone.      |
+| Sheen    | `--sheen-size` | Follows the pointer across the surface.        |
+
+- **Damped, never driven.** The card eases toward the pointer. Binding tilt 1:1
+  to cursor position is the single fastest way to make an expensive effect feel
+  cheap (§5).
+- The sheen and the backdrop's pointer glow are **fixed-size circles that get
+  translated**, never gradients that get repositioned. One is a composite, the
+  other is a repaint every frame.
+- `:focus-within` lights a card exactly as hover does. There is no tilt on the
+  keyboard path — there is no pointer to tilt toward — but there is everything
+  else.
+
+### The room
+
+Fainter than a card by an order of magnitude: `--c-pointer-glow` follows the
+cursor, and the dot matrix drifts and parallaxes. **The test for both is that
+you should not be able to point at them — only notice if they stop.**
+
+### Selection
+
+One indicator slides and morphs between chips; chips do not switch their own
+fill on and off. Watching the thing you picked travel to where you picked it is
+what ties a selector to the content swapping underneath it.
+
+### The floor
+
+- `prefers-reduced-motion` removes tilt, parallax, drift, the pointer glow and
+  the custom cursor. **Static hover states stay.** Reduced motion means less
+  movement, not less feedback.
+- Coarse pointers get the same treatment, for a different reason: there is no
+  hover, so a sheen would sit frozen wherever the last tap landed.
+- The custom cursor hides the native one **only while it is actually mounted**.
+  When it bails out, the real cursor is still there.
+- Entrances stay `transform` + `opacity` (§5). Blur-to-sharp is a repaint of
+  every card on every frame of the reveal, which is not affordable at these
+  card counts.
+
+---
+
+## 9. Component conventions
 
 ```
 src/components/   DOM UI — navbar, cursor, layout chrome
 src/canvas/       everything inside <Canvas> (R3F / three)
   └ shaders/      .glsl files, imported as strings
 src/sections/     the scroll journey, one file per section
+src/data/         static content the sections render - roadmaps, team, links
 src/hooks/        shared behaviour — useMagnetic, usePointer, …
 src/lib/          framework glue and singletons that outlive React —
                   currently the Lenis/GSAP scroll core
@@ -215,12 +371,14 @@ goes in `lib/`.
 
 ---
 
-## 8. Accessibility floor
+## 10. Accessibility floor
 
 Art direction is not an excuse to skip these.
 
 - Nav links are real focusable anchors with a visible `:focus-visible` ring.
-- Body text holds ≥ 4.5:1 against `--c-black`. `--c-text-faint` is decorative
-  only and must never carry meaning on its own.
+- Body text holds ≥ 4.5:1 against `--c-black` AND against `--content-bg` at
+  its brightest — top of frame, top-glow plus pointer glow plus grid. Measure
+  against that composite, not against the flat base.
+- `--c-text-faint` is decorative only and must never carry meaning on its own.
 - The canvas layer is `aria-hidden` and `pointer-events: none`.
 - `prefers-reduced-motion` is honoured, not ignored.

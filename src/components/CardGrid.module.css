@@ -1,0 +1,89 @@
+/* IOTA - the shared Resources / Team grid.
+   The card surface, its tilt, its sheen and its hover state all live in
+   Card.module.css. What is here is the grid and what goes inside a card. */
+
+.grid {
+  display: grid;
+  /* min() so a card can still shrink below its ideal width on a narrow phone
+     instead of forcing the page to scroll sideways. */
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 20rem), 1fr));
+  gap: var(--s-6);
+}
+
+/* The reveal target. GSAP writes an inline transform here, which is exactly
+   why the card's own tilt lives one level down. */
+.cell {
+  display: flex;
+  will-change: transform;
+}
+
+.eyebrow {
+  margin-bottom: var(--s-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-blue);
+}
+
+.title {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: 1.375rem;
+  line-height: 1.15;
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+  margin-bottom: var(--s-3);
+}
+
+.body {
+  color: var(--c-text-mute);
+  font-size: 0.9375rem;
+  margin-bottom: var(--s-6);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  /* Pushes the links to the bottom so rows of uneven cards still line up. */
+  margin-block-start: auto;
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid var(--c-hairline);
+}
+
+/* Text links, with the underline grown from the start rather than switched on
+   - the same move as the navbar, so the whole page underlines the same way. */
+.link {
+  position: relative;
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-mute);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -3px;
+  height: 1px;
+  background: var(--g-iota);
+  box-shadow: var(--glow-blue);
+  transform: scaleX(0);
+  transform-origin: 0% 50%;
+  transition: transform var(--d-base) var(--e-out);
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--c-text);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}

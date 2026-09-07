@@ -35,6 +35,37 @@ moments executed adequately.
 JavaScript, not TypeScript, on purpose — this is a club project and new members
 have to be able to open a file and contribute to it.
 
+### The HDR core and the bloom threshold are one system
+
+Three settings are coupled. Change any one alone and the centerpiece stops
+reading as light:
+
+1. `uCoreHdr` in `EnergyMass` pushes the core colour above 1.0.
+2. `EffectComposer` renders to a **HalfFloatType** buffer, so values above 1.0
+   survive instead of clamping. It is passed explicitly in `Effects.jsx` for
+   exactly this reason.
+3. `Bloom`'s `luminanceThreshold` sits at **1.0**, so only genuinely HDR pixels
+   bloom.
+
+That combination is what makes the core glow like a source while the dark 90%
+of the frame stays untouched. Drop the threshold instead and bloom lifts the
+whole frame, which is what DESIGN.md 6 warns against; drop the HDR and a 1.0
+threshold catches nothing at all.
+
+### Depth of field is in the shaders, not the composer
+
+Every material in the scene is additive with `depthWrite: false`, so the depth
+buffer is never written. `<DepthOfField>` reads that buffer to decide what to
+blur — given a uniform buffer it blurs everything or nothing. Enabling depth
+writes is not an option either: additive particles depend on stacking, and
+depth-testing them against each other is what destroys the white-hot core.
+
+So the circle of confusion is computed per particle in the vertex shaders
+(`uFocusDistance` / `uFocusRange` / `uBokehScale` in `EnergyMass` and
+`Debris`). A defocused sprite grows, dims, and widens its falloff — which is
+what a lens does to a point of light — for a few instructions instead of a
+full-screen blur. Controls live in those two Leva panels, not in `Grade`.
+
 ### Two build notes worth knowing
 
 - Vite 8 runs on **rolldown**. Rollup's `output.manualChunks` is accepted but
@@ -73,52 +104,85 @@ IOTA/
     └── styles/          tokens.css + global.css
 ```
 
-**The layer model.** Exactly two stacked layers, and this never changes:
+**The layer model.** Three stacked layers, and this never changes:
 
-| Layer      | z-index | What                                                 |
-| ---------- | ------- | ---------------------------------------------------- |
-| Canvas     | 0       | One fixed, transparent `<Canvas>` that never unmounts |
-| DOM        | 1       | Everything scrollable                                 |
+| Layer     | z-index | What                                                  |
+| --------- | ------- | ----------------------------------------------------- |
+| Backdrops | -1      | `Backdrop` (hero) then `ContentAtmosphere` (below it)  |
+| Canvas    | 0       | One fixed, transparent `<Canvas>` that never unmounts  |
+| DOM       | 1       | Everything scrollable                                  |
+| Cursor    | 200     | `Cursor`, standing in for the native pointer           |
 
 There is one WebGL context for the whole page. Sections scroll _over_ the
-canvas; they never own canvases of their own. That is what makes a single
-continuous camera journey across the whole page possible in later phases.
+canvas; they never own canvases of their own.
+
+The two backdrops share a z-index and are ordered so the content one paints
+over the hero one; the SHIFT (below) fades between them. Both sit under the
+canvas, which is what lets the composed room rise up *underneath* the 3D
+instead of sliding across it.
 
 ---
 
 ## Site structure
 
-Single scroll page. Navbar: **Home · Roadmap · Resources · Team**.
+Single scroll page. Navbar: **Home · Roadmap · Resources · Academics · Team**.
 
 | #   | Section   | Role in the journey                          |
 | --- | --------- | -------------------------------------------- |
 | 1   | Home      | Wordmark, tagline, centerpiece at full presence |
 | 2   | Roadmap   | Where the club is going                      |
 | 3   | Resources | What the club gives you                      |
-| 4   | Team      | Who runs it                                  |
-| 5   | Join      | CTA + footer                                 |
+| 4   | Academics | Semester-wise course material                |
+| 5   | Team      | Who runs it                                  |
+| 6   | Join      | CTA + footer                                 |
 
 ---
 
 ## The two hero pieces
 
-**Centerpiece — the neon figure.** `public/models/iota-neon.glb`, a Meshy-generated
-neon-visor figure, lit dramatically and travelling across the scroll.
+**Centerpiece — the energy mass.** `EnergyMass.jsx`: ~120k particles seeded
+through an ellipsoid volume and advected by a curl-noise field in the vertex
+shader, so the mass churns like a living cloud of light. Additive blending
+stacks the dense core into a white-hot centre that ramps out to blue then
+violet.
 
-> **Direction change.** This originally read "an abstract shader blob, **not** a
-> character model". That was reversed at the Phase 3 rebuild: the centerpiece is
-> now a real mesh. The premium read comes from *lighting*, not geometry — the
-> mesh is ~8k triangles with one baked material, so a strong blue rim, a violet
-> fill, near-zero ambient and an emissive-mapped visor do the work.
+> **Two earlier centerpieces are retained, unmounted, for instant revert.**
+> Both tree-shake out of the bundle while unreferenced, so they cost nothing
+> shipped:
 >
-> The old shader blob (`Blob.jsx`, `BlobTuner.jsx`, `shaders/blob.*.glsl`,
-> `EnvironmentProbe.jsx`) is **kept but unreferenced** — it tree-shakes out of
-> the bundle entirely, so it costs nothing shipped. Delete it once the model
-> direction is settled.
+> 1. **Model hero** — `HeroModel.jsx` + `HeroLighting.jsx`. A neon-visor mesh
+>    lit dramatically, with an emissive-mapped visor glow and drag-to-orbit.
+>    Reverting needs the lighting rig **and** the `<Environment>` block back:
+>    it uses MeshStandardMaterial, unlike the unlit particle mass.
+> 2. **Shader blob** — `Blob.jsx`, `BlobTuner.jsx`, `shaders/blob.*.glsl`,
+>    `EnvironmentProbe.jsx`. A noise-displaced icosahedron with a custom
+>    iridescent glass shader.
+>
+> `Scene.jsx` carries the revert instructions in its header comment.
 
-**Background — GPU particle warp.** Blue/violet streaks behind everything,
+**Atmosphere.** The mass sits in a built environment, not on bare black:
+`GlowHalo.jsx` (a large additive quad behind it, reading as the light source it
+is silhouetted against, breathing off the shared `choreo.heroPulse`),
+`Debris.jsx` (~420 slow-drifting specks in front of and around it, for parallax
+and scale), a shader depth-fade in both the mass and the debris, and
+`components/Backdrop.jsx` — a pure-CSS vignette painted *behind* the canvas at
+`--z-backdrop`.
+
+**Background — GPU particle warp.** Blue/violet streaks behind the hero,
 reacting to scroll velocity (streaks stretch) and cursor (flow bends). Behind
-all content, always.
+the hero content, and — since the SHIFT — nowhere else.
+
+**The SHIFT — two worlds.** The page is two rooms joined by one scrubbed
+boundary, written down once in `src/lib/shift.js`. Above: the cinematic room,
+the whole 3D stack. Below: the content room, static, `--content-bg` with one
+soft top light and a faint dot matrix (DESIGN.md §7). Across the hero's exit
+the canvas dims and pulls back while the content room comes up underneath it.
+
+Once the hero is off screen the canvas switches to `frameloop="never"` — not a
+single frame is rendered for the whole content world. It is **not** unmounted:
+that would throw away the WebGL context and the ~160k-particle buffers, and
+make every scroll back up to the hero pay to re-upload them. Culling the loop
+buys the same idle GPU without the hitch.
 
 ---
 
@@ -158,20 +222,56 @@ Written down because it shapes the architecture, starting in Phase 1:
 - [x] **Phase 2 — Scroll system & shell** _(complete)_
       Lenis bridged to GSAP/ScrollTrigger, Lenis velocity driving the warp,
       magnetic navbar with scroll-spy, four section stubs.
-- [x] **Phase 3 — The centerpiece** _(complete; rebuilt around a real model)_
+- [x] **Phase 3 — The centerpiece** _(complete; three iterations)_
+      (This entry used to claim a custom cursor. There was none in the tree -
+      it landed in Phase 7, not here.)
       First pass: noise-displaced icosahedron with a custom iridescent shader.
-      Rebuilt as the neon figure model (`HeroModel.jsx`) with a dramatic light
-      rig, emissive-mapped visor glow and drag-to-orbit. Also: preloader intro,
+      Then the neon figure model (`HeroModel.jsx`) with a dramatic light rig,
+      emissive-mapped visor glow and drag-to-orbit. Now the curl-noise energy
+      mass (`EnergyMass.jsx`), which is what is mounted. Also: preloader intro,
       masked hero reveal, and one scrubbed ScrollTrigger timeline for the
       Home -> Roadmap move.
-- [ ] **Phase 4 — Scroll storytelling** _(deferred — comes after Phase 5)_
-      Real section content for Roadmap / Resources / Team, text reveals,
-      pinning, section transitions.
+- [~] **Phase 4 - Scroll storytelling** _(in progress)_
+      Shared section system (`components/Section.jsx` + `hooks/useReveal.js`)
+      and the Roadmap: nine selectable domain tracks with a scroll-drawn
+      timeline. Then Academics, which reuses the same chip tablist
+      (`TrackSelector`) for four semester tabs over a grid of course cards.
+      Resources and Team still stubs.
+      The hero centerpiece is now hero-only - EnergyMass fades out over the
+      tail of the push-in and the warp dims below the hero, so section copy
+      reads on near-black.
 - [x] **Phase 5 — Polish & performance** _(complete)_
       Lazy-loaded canvas, device quality tiers, tier-gated post-processing,
       thorough reduced-motion path, chunking fix, README + Vercel config.
+- [x] **Phase 6 — Two worlds & the SHIFT** _(complete)_
+      The page split into a cinematic hero and a composed content room, joined
+      by one scrubbed boundary (`lib/shift.js`). New `ContentAtmosphere` and
+      `ShiftMarker`; content-world tokens; full-bleed section dividers; the
+      canvas fades, pulls back, and then stops rendering entirely below the
+      hero.
+- [x] **Phase 7 — The content world comes alive** _(complete)_
+      One shared `components/Card.jsx` - tilt, pointer sheen, lift - behind
+      every card in the content world, plus `hooks/useCardMotion.js`. A sliding
+      indicator in `TrackSelector`; a leading draw-head, spring nodes and a
+      ring pulse on the roadmap spine; `hooks/useSectionMotion.js` for the
+      connector draw and heading parallax; a pointer glow and a drifting grid
+      on the content backdrop; and `components/Cursor.jsx`, which is where the
+      custom cursor actually arrived. DESIGN.md §8 is the contract.
+- [x] **Phase 8 — Real roadmap content and the blaze** _(complete)_
+      All nine tracks filled in with real Beginner/Intermediate/Advanced
+      stages. The timeline now heats up as it descends: a spine whose gradient
+      ramps cool blue to white-hot, level-graded node and card halos, colour-
+      coded level tags, and blue fire at the Advanced end. Domain chips
+      brightened to read as live controls. DESIGN.md §2, "The blaze ramp".
+- [x] **Phase 9 — Vivid content world** _(complete)_
+      Section titles to 56-120px, gradient-filled with a letterform-shaped
+      glow. Text contrast lifted across the content world. Top dividers and
+      the mono connector draw in on scroll and now glow. Resources and Team
+      finally have content: `data/resources.js`, `data/team.js` and the shared
+      `components/CardGrid.jsx`, so every content section runs on <Card> and
+      gets the tilt, sheen and hover treatment.
 
-Phases 1–5 are the proposed shape based on the brief — adjust freely at each
+Phases 1–9 are the proposed shape based on the brief — adjust freely at each
 kickoff. Phase 0 is the only one that is settled.
 
 ---
@@ -185,5 +285,12 @@ kickoff. Phase 0 is the only one that is settled.
   meshopt compression before it ships either way.
 - ~~`vite-plugin-glsl` is installed ahead of the shader work.~~ **Resolved** —
   in active use as of Phase 1 (`src/canvas/shaders/*.glsl`).
-- All real copy — tagline, roadmap milestones, resource links, team members — is
-  still to be written.
+- Real copy: the hero tagline and all nine roadmap tracks are written.
+  **Still outstanding**, all currently marked PLACEHOLDER in their data files:
+  - `data/resources.js` — the six categories are the real decision; the copy
+    and every url are stand-ins.
+  - `data/team.js` — deliberately roles rather than people. Inventing
+    plausible names and handles for a real club would put fake people on a
+    real page, and they would be easy to leave there by accident. Add a
+    `name` per entry once the committee is confirmed.
+  - `data/academics.js` — every resource url is still `#`.

@@ -1,5 +1,7 @@
 /* IOTA — the fixed WebGL layer.
-   Pinned behind the whole document; every DOM section scrolls over it. */
+   Pinned behind the hero; every DOM section scrolls over it. Opacity and
+   scale are written from JS by the SHIFT (SceneCanvas.jsx), never from here -
+   so with no script the hero still renders at full strength. */
 
 .layer {
   position: fixed;
@@ -8,6 +10,16 @@
   /* The canvas is decorative and must never eat clicks meant for the DOM
      layer above it. */
   pointer-events: none;
+  /* The shift scrubs both of these every frame; promoting the layer keeps that
+     work on the compositor instead of the main thread. */
+  will-change: transform, opacity;
+}
+
+/* The hero is off screen: the render loop has already stopped, and this drops
+   the layer out of compositing too. By the time it applies the shift has long
+   since taken opacity to 0, so there is nothing to see disappear. */
+.culled {
+  visibility: hidden;
 }
 
 /* r3f-perf renders its overlay into the canvas's parent (this element), so it

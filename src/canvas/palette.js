@@ -1,5 +1,5 @@
 /* IOTA — bridge from CSS design tokens into GLSL uniforms.
-   DESIGN.md §7 says no hardcoded hex outside tokens.css. The shader needs real
+   DESIGN.md §9 says no hardcoded hex outside tokens.css. The shader needs real
    numbers, so rather than duplicating the palette in JS we read it back out of
    the stylesheet at runtime. tokens.css stays the single source of truth. */
 import { Vector3 } from 'three'
@@ -52,6 +52,23 @@ export const warpPalette = {
   blue: () => readToken('--c-blue', '#5d86ff'),
   violet: () => readToken('--c-violet', '#9d7bff'),
   white: () => readToken('--c-glow', '#c7d4ff'),
+}
+
+/** Energy-mass palette, pulled from tokens.css.
+   `--c-glow` is designated "the brightest pixel" in DESIGN.md §2, which is
+   exactly the white-hot core this needs — additive stacking takes it the rest
+   of the way to white. */
+export const energyPalette = {
+  core: () => readToken('--c-glow', '#c7d4ff'),
+  blue: () => readToken('--c-blue', '#5d86ff'),
+  violet: () => readToken('--c-violet', '#9d7bff'),
+}
+
+/** Atmosphere colours — the glow source and the drifting debris. */
+export const atmospherePalette = {
+  glow: () => readToken('--c-glow', '#c7d4ff'),
+  debrisDim: () => readToken('--c-text-mute', '#9aa3bf'),
+  debrisLit: () => readToken('--c-glow', '#c7d4ff'),
 }
 
 /** Hero light-rig colours, pulled from tokens.css. */

@@ -22,6 +22,12 @@ export const TIER = {
 const BUDGET = {
   [TIER.HIGH]: {
     particles: 100000,
+    // The hero mass runs 12 noise samples per particle for its curl field, so
+    // it is far more expensive per-particle than the warp.
+    heroParticles: 160000,
+    debrisCount: 420,
+    // Multiplier on the per-particle depth-of-field bokeh. 0 disables it.
+    bokehScale: 1,
     blobDetail: 32,
     bloom: true,
     chromatic: true,
@@ -30,6 +36,9 @@ const BUDGET = {
   },
   [TIER.MEDIUM]: {
     particles: 45000,
+    heroParticles: 45000,
+    debrisCount: 220,
+    bokehScale: 0.5,
     blobDetail: 20,
     bloom: true,
     chromatic: false,
@@ -38,6 +47,11 @@ const BUDGET = {
   },
   [TIER.LOW]: {
     particles: 18000,
+    heroParticles: 20000,
+    debrisCount: 110,
+    // No defocus at all on the floor tier — oversized sprites are pure
+    // fill-rate, which is exactly what a weak GPU has least of.
+    bokehScale: 0,
     blobDetail: 12,
     bloom: false,
     chromatic: false,

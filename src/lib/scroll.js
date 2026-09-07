@@ -56,6 +56,12 @@ export function unlockScroll() {
   locked = false
   document.documentElement.style.overflow = ''
   lenis?.start()
+  // Every ScrollTrigger created during the intro was measured against a
+  // document that could not scroll - `overflow: hidden` on <html> means no
+  // scroll height, so starts and ends resolve against the wrong distance.
+  // Re-measure now that the real page geometry exists, or reveals further
+  // down the page can be left holding their hidden state.
+  ScrollTrigger.refresh()
 }
 
 export function initSmoothScroll() {

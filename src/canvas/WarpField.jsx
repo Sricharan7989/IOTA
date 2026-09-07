@@ -26,8 +26,8 @@ export const WARP_DEFAULTS = {
   baseSpeed: 7,
   boostSpeed: 38,
   size: 2.6,
-  maxSize: 26,
-  streak: 0.55,
+  maxSize: 31,
+  streak: 0.18,
   brightness: 1,
   softness: 1.8,
   repelRadius: 0.42,
@@ -37,10 +37,17 @@ export const WARP_DEFAULTS = {
   // Lenis velocity that counts as "full throttle" scrolling. Lower = the warp
   // reacts to gentler scrolls.
   scrollScale: 22,
-  scrollInfluence: 1,
+  scrollInfluence: 0.95,
   // How much the scripted Home -> Roadmap move accelerates the warp on its
   // own, independently of how fast you happen to be scrolling.
   choreoInfluence: 0.55,
+  // How far the warp dims across the hero's exit. It no longer has to reach
+  // zero on its own: since the SHIFT, the whole canvas layer fades out over
+  // the same stretch and the warp is gone below the hero either way. This is
+  // purely the weighting *during* the handoff - the warp holds on longer than
+  // the debris (0.85) or the halo (0.75), so the last thing to leave is the
+  // field the mass was floating in.
+  scrollDim: 0.45,
 }
 
 export default function WarpField({
@@ -62,6 +69,7 @@ export default function WarpField({
   scrollScale = WARP_DEFAULTS.scrollScale,
   scrollInfluence = WARP_DEFAULTS.scrollInfluence,
   choreoInfluence = WARP_DEFAULTS.choreoInfluence,
+  scrollDim = WARP_DEFAULTS.scrollDim,
   colorBlue,
   colorViolet,
   colorWhite,
@@ -197,7 +205,10 @@ export default function WarpField({
     uniforms.uRadius.value = radius
     uniforms.uSize.value = size
     uniforms.uMaxSize.value = maxSize
-    uniforms.uBrightness.value = brightness
+    // Dim across the hero's exit. The canvas layer's own fade finishes the
+    // job — see the note on scrollDim above.
+    uniforms.uBrightness.value =
+      brightness * (1 - choreo.heroProgress * scrollDim)
     uniforms.uStreak.value = isReduced ? 0 : streak
     uniforms.uSoftness.value = softness
     uniforms.uRepelRadius.value = repelRadius

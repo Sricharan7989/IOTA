@@ -1,0 +1,33 @@
+/* IOTA — framing layer painted BEHIND the canvas.
+   Pure CSS, no repaint cost, and it renders on the very first frame — long
+   before the WebGL chunk has downloaded. */
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-backdrop);
+  pointer-events: none;
+  background:
+    /* Radial vignette: clear through the centre where the mass sits, closing
+       down to near-black at the corners. Pure black rather than --c-black so
+       it can darken *below* the page base. */
+    radial-gradient(
+      118% 88% at 50% 44%,
+      transparent 34%,
+      var(--c-vignette-mid) 76%,
+      var(--c-vignette-edge) 100%
+    ),
+    var(--c-black);
+}
+
+/* Optional grounding wash at the very bottom of frame. Deliberately almost
+   invisible — the brief is an abstract void, not a landscape, and anything
+   stronger than this immediately reads as a fake horizon.
+   Delete this rule and the <span> in Backdrop.jsx to remove it entirely. */
+.horizon {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  height: 38svh;
+  background: linear-gradient(to top, var(--c-horizon) 0%, transparent 100%);
+}

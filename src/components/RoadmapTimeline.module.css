@@ -1,0 +1,424 @@
+/* IOTA - roadmap timeline.
+   A drawing vertical spine with a node per stage. The node column is a fixed
+   width so the spine, the nodes and the cards all share one axis. */
+
+.timeline {
+  position: relative;
+}
+
+/* ---- The spine, and the blaze ---- */
+
+/* The unlit rail. No overflow clipping: the glow layers are wider than the
+   2px line and have to spread past it. Vertical reveal is the wrapper's clip
+   instead. */
+.spineTrack {
+  position: absolute;
+  inset-block-start: 0.9rem;
+  inset-block-end: 0;
+  /* Centre of the node column: nodes are 22px wide starting at 0. */
+  inset-inline-start: 10px;
+  width: 2px;
+  background: var(--c-hairline);
+}
+
+/* The reveal. --fill is how much is still hidden, clipped off the bottom, and
+   is written by RoadmapTimeline.jsx; 100% until then, so a page with no JS
+   shows an undrawn rail rather than a half-drawn one.
+
+   Negative left/right insets so the clip is vertical only - without them it
+   would shave the glow back to the 2px line. */
+.spineFill {
+  position: absolute;
+  inset: 0;
+  --fill: 100%;
+  clip-path: inset(0 -28px var(--fill) -28px);
+}
+
+/* The line itself. The gradient is anchored to the full height of the track,
+   never scaled, so what the clip reveals is genuinely the cool END of the ramp
+   rather than the whole ramp squashed. */
+.spine {
+  position: absolute;
+  inset: 0;
+  background: var(--g-blaze);
+}
+
+/* The soft body of the glow, widening the line into something that reads as
+   lit. Blurred once and then only re-clipped, which is the whole reason the
+   clip lives on the wrapper. */
+.spineGlow {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: -5px;
+  background: var(--g-blaze);
+  filter: blur(6px);
+  opacity: 0.75;
+}
+
+/* The blue fire at the Advanced end. Transparent for the top half, so it adds
+   nothing until the track is already hot, then flickers. */
+.spineHeat {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: -11px;
+  background: var(--g-blaze-heat);
+  filter: blur(11px);
+  opacity: 0.85;
+  animation: flicker 2.3s var(--e-in-out) infinite;
+}
+
+/* The draw head. Rides the leading edge of the spine, and lives OUTSIDE
+   .spineTrack because that column is 2px wide and clips. Its geometry has to
+   agree with the track's: same top, and centred on the track's 2px width. */
+.head {
+  position: absolute;
+  inset-block-start: 0.9rem;
+  inset-inline-start: 11px;
+  width: 10px;
+  height: 10px;
+  /* Centres the dot on the point it is translated to. */
+  margin: -5px 0 0 -5px;
+  border-radius: 50%;
+  background: var(--c-blaze-white);
+  box-shadow: var(--glow-hot);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+/* ---- Stages ---- */
+
+.stages {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-16);
+}
+
+.stage {
+  position: relative;
+  padding-inline-start: var(--s-12);
+}
+
+.node {
+  position: absolute;
+  inset-inline-start: 0;
+  inset-block-start: 0.9rem;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  border: 1px solid var(--c-hairline-strong);
+  background: var(--c-black);
+  /* No transform here: the spring pop is GSAP's, and a CSS transition on the
+     same channel would fight it. Only the paint properties transition. */
+  transition:
+    background-color var(--d-base) var(--e-out),
+    border-color var(--d-base) var(--e-out),
+    box-shadow var(--d-base) var(--e-out);
+  will-change: transform;
+}
+
+/* One-shot ring, fired outward as the node activates. Sits outside the node's
+   own box, so it must not be clipped by it. */
+.ring {
+  position: absolute;
+  inset: -1px;
+  border-radius: 50%;
+  border: 1px solid var(--c-violet);
+  opacity: 0;
+  pointer-events: none;
+  will-change: transform, opacity;
+}
+
+.node::after {
+  content: '';
+  position: absolute;
+  inset: 5px;
+  border-radius: 50%;
+  background: var(--c-text-faint);
+  transition: background var(--d-base) var(--e-out);
+}
+
+/* The node's own halo, scaled by level below. Hollow through the middle so it
+   glows AROUND the node instead of washing over it - which is also why it can
+   paint on top without needing a z-index fight with the node's background. */
+.node::before {
+  content: '';
+  position: absolute;
+  inset: -12px;
+  border-radius: 50%;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity var(--d-base) var(--e-out);
+}
+
+/* Lit by ScrollTrigger as each stage enters view. Colour only — the pop is a
+   GSAP spring, see RoadmapTimeline.jsx. */
+.active .node {
+  border-color: transparent;
+  background: var(--g-iota);
+}
+
+.active .node::after {
+  background: var(--c-black);
+}
+
+/* ======================================================================
+   THE BLAZE
+
+   One attribute, data-level on the <li>, drives all four expressions of a
+   stage's heat: the node's glow, the halo behind its card, the level tag, and
+   the accent colours inside the card. Each tier only means something next to
+   the other two - retuning one alone flattens the ramp, which is the effect.
+
+   Cards get their heat from a wrapper rather than from Card itself: Card
+   clips its own overflow to contain its pointer sheen, so anything glowing
+   outside its edges has to live behind it.
+   ====================================================================== */
+
+.cardWrap {
+  position: relative;
+  /* Keeps the halos' negative z-index inside this wrapper rather than letting
+     it escape and fall behind the section. */
+  isolation: isolate;
+}
+
+/* Two halo layers, not one. Two soft glows on different periods never line up,
+   and that beat is what reads as fire rather than as a throb. */
+.cardWrap::before,
+.cardWrap::after {
+  content: '';
+  position: absolute;
+  inset: -14px;
+  z-index: -1;
+  border-radius: 26px;
+  pointer-events: none;
+  opacity: 0;
+}
+
+/* ---- Beginner: cold, and barely there ---- */
+
+.stage[data-level='beginner'] .node {
+  box-shadow: var(--glow-cool);
+}
+
+.stage[data-level='beginner'] .node::before {
+  background: var(--halo-cool);
+  opacity: 0.5;
+}
+
+.stage[data-level='beginner'] .cardWrap::before {
+  background: var(--halo-cool);
+  opacity: 0.34;
+}
+
+.stage[data-level='beginner'] .level {
+  color: var(--c-blaze-cool);
+  border-color: color-mix(in srgb, var(--c-blaze-cool) 45%, transparent);
+}
+
+.stage[data-level='beginner'] .stageIndex {
+  color: var(--c-blaze-cool);
+}
+
+/* ---- Intermediate: lit ---- */
+
+.stage[data-level='intermediate'] .node {
+  box-shadow: var(--glow-mid);
+}
+
+.stage[data-level='intermediate'] .node::before {
+  background: var(--halo-mid);
+  opacity: 0.75;
+}
+
+.stage[data-level='intermediate'] .cardWrap::before {
+  background: var(--halo-mid);
+  opacity: 0.6;
+}
+
+.stage[data-level='intermediate'] .level {
+  color: var(--c-blaze-mid);
+  border-color: color-mix(in srgb, var(--c-blaze-mid) 60%, transparent);
+  box-shadow: inset 0 0 12px color-mix(in srgb, var(--c-blaze-mid) 18%, transparent);
+}
+
+.stage[data-level='intermediate'] .stageIndex {
+  color: var(--c-blaze-mid);
+}
+
+/* ---- Advanced: blue fire ---- */
+
+.stage[data-level='advanced'] .node {
+  box-shadow: var(--glow-hot);
+  border-color: var(--c-blaze-hot);
+}
+
+.stage[data-level='advanced'] .node::before {
+  background: var(--halo-hot);
+  opacity: 1;
+  animation: blaze 2.9s var(--e-in-out) infinite;
+}
+
+/* The steady body of the fire... */
+.stage[data-level='advanced'] .cardWrap::before {
+  background: var(--halo-hot);
+  opacity: 0.85;
+  animation: blaze 3.1s var(--e-in-out) infinite;
+}
+
+/* ...and the flicker over it, on a period that never divides into the other's.
+   Both animate opacity and transform only, so neither costs a repaint. */
+.stage[data-level='advanced'] .cardWrap::after {
+  inset: -22px;
+  border-radius: 34px;
+  background: var(--halo-hot);
+  animation: flicker 1.7s var(--e-in-out) infinite;
+}
+
+.stage[data-level='advanced'] .level {
+  color: var(--c-blaze-white);
+  border-color: var(--c-blaze-hot);
+  box-shadow:
+    inset 0 0 14px color-mix(in srgb, var(--c-blaze-hot) 30%, transparent),
+    0 0 18px color-mix(in srgb, var(--c-blaze-hot) 28%, transparent);
+}
+
+.stage[data-level='advanced'] .stageIndex {
+  color: var(--c-blaze-hot);
+}
+
+.stage[data-level='advanced'] .item::before {
+  background: var(--c-blaze-hot);
+}
+
+/* ---- The two fire rhythms ---- */
+
+@keyframes blaze {
+  0%,
+  100% {
+    opacity: 0.62;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.035);
+  }
+}
+
+@keyframes flicker {
+  0%,
+  100% {
+    opacity: 0.2;
+  }
+  23% {
+    opacity: 0.46;
+  }
+  44% {
+    opacity: 0.12;
+  }
+  67% {
+    opacity: 0.54;
+  }
+  85% {
+    opacity: 0.24;
+  }
+}
+
+/* DESIGN.md 5 and the brief: reduced motion keeps the whole colour ramp -
+   gradient, halos, tag colours, node glows - and drops only the movement.
+   Explicit `animation: none` rather than relying on global.css's blanket
+   duration override, which would leave each layer frozen on whatever its last
+   keyframe happened to be. */
+@media (prefers-reduced-motion: reduce) {
+  .spineHeat,
+  .stage[data-level='advanced'] .node::before,
+  .stage[data-level='advanced'] .cardWrap::before,
+  .stage[data-level='advanced'] .cardWrap::after {
+    animation: none;
+  }
+
+  .stage[data-level='advanced'] .cardWrap::after {
+    opacity: 0.3;
+  }
+}
+
+/* ---- Card contents ---- */
+/* The surface, its tilt, its sheen and its hover state live in
+   Card.module.css. The stage's activation is carried by the node's spring and
+   ring rather than by a border tint on the card: with the card now lighting up
+   under the pointer, two competing border states read as a bug. */
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--s-3);
+  margin-bottom: var(--s-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.stageIndex {
+  color: var(--c-blue);
+}
+
+/* Shape only — every colour on this comes from the stage's tier above. */
+.level {
+  padding: 2px var(--s-2);
+  border: 1px solid var(--c-hairline);
+  border-radius: 999px;
+  color: var(--c-text-faint);
+  transition:
+    color var(--d-base) var(--e-out),
+    border-color var(--d-base) var(--e-out);
+}
+
+.title {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: var(--t-h2);
+  line-height: 1.1;
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+  margin-bottom: var(--s-2);
+}
+
+.desc {
+  max-width: 62ch;
+  color: var(--c-text-mute);
+  margin-bottom: var(--s-4);
+}
+
+.items {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-2);
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid var(--c-hairline);
+}
+
+.item {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-3);
+  color: var(--c-text);
+  font-size: 0.9375rem;
+}
+
+.item::before {
+  content: '';
+  flex: 0 0 auto;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--c-violet);
+  transform: translateY(-2px);
+}
+
+@media (max-width: 640px) {
+  .stage {
+    padding-inline-start: var(--s-8);
+  }
+}

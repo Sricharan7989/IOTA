@@ -1,0 +1,73 @@
+/* IOTA — hero corner pills (Lusion-style). */
+
+.pills {
+  display: flex;
+  align-items: center;
+  gap: var(--s-2);
+}
+
+.pill {
+  position: relative;
+  /* Contains the fill's negative z-index so it stacks behind the label. */
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  padding: var(--s-2) var(--s-4);
+  border: 1px solid var(--c-hairline);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-surface) 55%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-mute);
+  transition:
+    color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out);
+  will-change: transform;
+}
+
+/* Wipes up from the base of the pill rather than simply appearing - the same
+   move as the resource pills in the content world. */
+.pill::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: var(--g-iota);
+  opacity: 0.22;
+  transform: scaleY(0);
+  transform-origin: 50% 100%;
+  transition: transform var(--d-base) var(--e-out);
+}
+
+.pill:hover,
+.pill:focus-visible {
+  color: var(--c-text);
+  border-color: var(--c-hairline-strong);
+}
+
+.pill:hover::before,
+.pill:focus-visible::before {
+  transform: scaleY(1);
+}
+
+/* The primary CTA carries the accent. */
+.primary {
+  color: var(--c-text);
+  border-color: var(--c-hairline-strong);
+  box-shadow: var(--glow-blue);
+  transition:
+    color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    box-shadow var(--d-base) var(--e-out);
+}
+
+.primary:hover,
+.primary:focus-visible {
+  box-shadow: var(--glow-blue), var(--glow-violet);
+}

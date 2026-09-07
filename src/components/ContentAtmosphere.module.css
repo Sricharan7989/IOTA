@@ -1,0 +1,102 @@
+/* IOTA - the composed room.
+   Three flat layers on one fixed element: base colour, one top light, one dot
+   matrix. Fixed rather than scrolling, so the texture stays put under the
+   content and reads as the room the sections are in rather than as decoration
+   attached to any one of them. */
+
+.world {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-backdrop);
+  pointer-events: none;
+  background-color: var(--content-bg);
+  /* Absent until the SHIFT brings it up. Set from JS thereafter - so if the
+     script never runs the hero simply keeps its own backdrop, which is a
+     correct page rather than a broken one. */
+  opacity: 0;
+  /* The shift scrubs this every frame; promoting it keeps the work on the
+     compositor. */
+  will-change: opacity;
+}
+
+/* The room's single light source. Centred just above the top of the frame, so
+   what lands on screen is the lower half of a very wide, very soft pool. */
+.glow {
+  position: absolute;
+  inset: 0;
+  background: var(--content-glow);
+}
+
+/* Dot matrix - the engineered texture. Behind every section, and behind all
+   text, so it can never touch contrast; --grid-op is the only dial.
+
+   Two elements because it has two movements: the wrapper is parallaxed by the
+   scroll, the inner grid drifts on its own slow loop. Both are transforms, on
+   separate nodes, so neither overwrites the other. */
+.gridWrap {
+  position: absolute;
+  /* Overscan. Both movements translate this, and a viewport-sized layer would
+     drag a hard edge into frame. */
+  inset: -12% 0;
+  will-change: transform;
+}
+
+.grid {
+  position: absolute;
+  inset: 0;
+  opacity: var(--grid-op);
+  background-image: radial-gradient(
+    circle,
+    var(--grid-dot) 1px,
+    transparent 1.4px
+  );
+  background-size: var(--grid-size) var(--grid-size);
+  will-change: transform;
+}
+
+/* The room noticing the pointer. A fixed-size circle that gets translated,
+   never re-gradiented, so following the cursor is a composite rather than a
+   full-viewport repaint - the same trick as a card's sheen, an order of
+   magnitude fainter and much slower. */
+.pointerGlow {
+  position: absolute;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  width: var(--pointer-glow-size);
+  height: var(--pointer-glow-size);
+  /* Centres the circle on the point it is translated to. */
+  margin: calc(var(--pointer-glow-size) / -2);
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    var(--c-pointer-glow) 0%,
+    var(--c-pointer-glow-mid) 40%,
+    transparent 100%
+  );
+  will-change: transform;
+}
+
+/* No pointer to follow: the glow would sit frozen wherever the last tap
+   landed. The JS bails for the same reason; this is the paint half. */
+@media (hover: none), (pointer: coarse) {
+  .pointerGlow {
+    display: none;
+  }
+}
+
+/* Denser on small screens: the dots are a texture, and at phone width a 34px
+   pitch starts reading as individual marks instead. */
+@media (max-width: 640px) {
+  .grid {
+    background-size: calc(var(--grid-size) * 0.7) calc(var(--grid-size) * 0.7);
+  }
+}
+
+/* DESIGN.md 5. Nothing in the room moves: no drift, no parallax, no pointer
+   glow. The base, the top light and the grid are all still there - the room is
+   the same room, it simply holds still. */
+@media (prefers-reduced-motion: reduce) {
+  .pointerGlow {
+    display: none;
+  }
+}

@@ -14,3 +14,13 @@ export function dampFactor(dt, lambda) {
 export function clamp(value, min, max) {
   return Math.min(Math.max(value, min), max)
 }
+
+/**
+ * Hermite smoothstep. Returns 0 below `edge0`, 1 above `edge1`, and an
+ * ease-in-out ramp between. The JS twin of GLSL's smoothstep, used where a
+ * fade has to start and finish somewhere specific rather than run linearly.
+ */
+export function smoothstep(edge0, edge1, x) {
+  const t = Math.min(1, Math.max(0, (x - edge0) / (edge1 - edge0 || 1e-6)))
+  return t * t * (3 - 2 * t)
+}
