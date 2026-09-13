@@ -28,9 +28,9 @@ const COPY = {
   // The bottom-right tagline, set as three masked lines.
   // `descriptionAccent` is the italic, gradient-filled word and it leads.
   descriptionAccent: 'First',
-  descriptionLead: 'Club',
-  descriptionMid: 'in IIIT',
-  descriptionTail: 'Sri City',
+  descriptionLead: 'Tech Club',
+  descriptionMid: 'in IIIT Sri City',
+  descriptionTail: '',
 
   // The second statement, revealed by the scrubbed scroll timeline rather than
   // by the intro. Two short lines works best — it has to land and clear before

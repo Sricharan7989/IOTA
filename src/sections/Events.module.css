@@ -1,0 +1,112 @@
+/* IOTA - Events section layout.
+   Two blocks with generous air between them, each introduced by the same
+   rule-label-rule marker the rest of the page uses. */
+
+.blocks {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-24);
+}
+
+/* Heading plus its cards. Tighter than the gap between blocks, so a heading
+   reads as belonging to what is under it rather than floating between two. */
+.block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+/* ---- Block headings ---- */
+
+.blockHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  width: 100%;
+}
+
+.label {
+  flex: 0 0 auto;
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  font-weight: 400;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--c-text-mute);
+}
+
+/* Solid at the label, dissolving toward the page edge - a full-bleed hard
+   line would compete with the section's own divider. */
+.rule {
+  flex: 1;
+  height: 1px;
+}
+
+.left {
+  background: linear-gradient(to right, transparent, var(--content-divider));
+}
+
+.right {
+  background: linear-gradient(to left, transparent, var(--content-divider));
+}
+
+/* ---- The grid ---- */
+
+/* Three columns, stepping to two then one. Explicit counts rather than
+   auto-fill: the block should read as an even run of cards, and auto-fill
+   would let the column count drift with the viewport. */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+
+.cell {
+  display: flex;
+  /* GSAP writes an inline transform here for the reveal, which is exactly why
+     the card's own tilt lives one level down. */
+  will-change: transform;
+}
+
+/* ---- The empty state ---- */
+
+/* Deliberately quiet: a dashed hairline and muted copy. Loud enough to be
+   read as an answer rather than a rendering failure, quiet enough that it
+   does not compete with the archive underneath it. */
+.empty {
+  padding-block: var(--s-16);
+  border: 1px dashed var(--c-hairline);
+  border-radius: 14px;
+  text-align: center;
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-mute);
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .blocks {
+    gap: var(--s-16);
+  }
+
+  .block {
+    gap: var(--s-6);
+  }
+
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-4);
+  }
+
+  .empty {
+    padding-block: var(--s-12);
+  }
+}

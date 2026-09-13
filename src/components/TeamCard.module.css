@@ -1,0 +1,222 @@
+/* IOTA - one person card, at one of three ranks.
+   The surface, its tilt, its sheen and its hover state all belong to
+   Card.module.css. What is here is the person layout and the size step
+   between tiers - so the hierarchy reads before anything has animated.
+
+   Card's own class lands on the same element as `.card` below, so anything
+   that sets a property Card also sets is written as `.card.<tier>` - two
+   classes, which beats Card's single-class rule no matter which stylesheet
+   the bundler happens to inject first. Nothing here touches border-color or
+   box-shadow: those are Card's hover channel, and a tie on specificity would
+   silently kill the hover. */
+
+.card {
+  /* An avatar over a name wants a centre axis. All three tiers share it, so
+     the section stays internally consistent even though the sizes differ.
+     Card's .content is a column flex container, so its children already
+     stretch to full width - this only centres what is inside them. */
+  text-align: center;
+}
+
+/* ---- The monogram ---- */
+
+.avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  /* Clips the photo to the circle. The photo also carries its own radius, so
+     this is belt and braces - a square image must never show a corner. */
+  overflow: hidden;
+  width: var(--avatar);
+  height: var(--avatar);
+  margin-inline: auto;
+  margin-block-end: var(--s-4);
+  border-radius: 50%;
+  background: var(--g-iota);
+  box-shadow: var(--glow-violet);
+  font-family: var(--f-display);
+  font-weight: 700;
+  /* Scales with the circle, so one rule serves all three tiers. */
+  font-size: calc(var(--avatar) * 0.4);
+  letter-spacing: var(--tr-display);
+  /* Near-black on the gradient - the same contrast pairing as the active
+     selector chip. */
+  color: var(--c-black);
+}
+
+/* The photo, layered over the monogram rather than replacing it. Absolute so
+   it covers the circle exactly whatever the tier's --avatar is, and
+   object-fit: cover so a not-quite-square upload crops instead of squashing.
+
+   If it fails to load, TeamCard hides this element and the monogram
+   underneath is simply revealed. */
+.photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/* ---- Copy ---- */
+
+.name {
+  font-family: var(--f-display);
+  font-weight: 600;
+  font-size: var(--name-size);
+  line-height: 1.1;
+  letter-spacing: var(--tr-display);
+  color: var(--c-text);
+  margin-block-end: var(--s-2);
+}
+
+.role {
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-blue);
+  margin-block-end: var(--s-3);
+}
+
+.bio {
+  color: var(--c-text-mute);
+  font-size: 0.9375rem;
+  /* Short lines under a centred name; the section's 62ch cap is for running
+     copy, not for a one-line bio. */
+  max-width: 34ch;
+  margin-inline: auto;
+}
+
+/* ---- Socials ---- */
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-4);
+  /* Pushes the row to the bottom so uneven bios still line their links up. */
+  margin-block-start: auto;
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid var(--c-hairline);
+}
+
+/* Underline grown from the start rather than switched on - the same move as
+   the navbar, so the whole page underlines the same way. */
+.link {
+  position: relative;
+  display: inline-block;
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-mute);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: -3px;
+  height: 1px;
+  background: var(--g-iota);
+  box-shadow: var(--glow-blue);
+  transform: scaleX(0);
+  transform-origin: 0% 50%;
+  transition: transform var(--d-base) var(--e-out);
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--c-text);
+}
+
+.link:hover::after,
+.link:focus-visible::after {
+  transform: scaleX(1);
+}
+
+/* ======================================================================
+   THE SIZE STEP
+
+   Three ranks, three sizes, and the gaps between them are deliberate: the
+   coordinator has to read as the most important card in the section with the
+   page frozen, before a single thing has moved. Animation intensity says the
+   same thing a second time - see useTeamReveal.
+   ====================================================================== */
+
+/* Mentor and Advisor are the same size deliberately: they are two people at
+   the same rank, not a first and a second. */
+.card.mentor,
+.card.advisor {
+  --avatar: 5.5rem;
+  --name-size: clamp(1.75rem, 3vw, 2.25rem);
+  /* Roomier than Card's default --s-6. The extra air is most of why they read
+     as the top of the section. */
+  padding: var(--s-12) var(--s-8);
+}
+
+.card.coordinator {
+  --avatar: 4.5rem;
+  --name-size: 1.5rem;
+  padding: var(--s-8);
+}
+
+.card.executive {
+  --avatar: 3.75rem;
+  --name-size: 1.25rem;
+  padding: var(--s-6);
+}
+
+.card.member {
+  --avatar: 3.25rem;
+  --name-size: 1.0625rem;
+}
+
+/* ---- The coordinator's glow sweep ---- */
+
+/* A band of light dragged across the card once, after the entrance lands.
+   Wider than the card and angled, so what crosses the face is the soft middle
+   of the gradient rather than either hard end. Card clips it.
+
+   Two details that matter:
+   - `rotate`, the standalone property, NOT `transform: rotate()`. useTeamReveal
+     animates xPercent, which writes `transform` - a rotation living there
+     would be wiped on the first frame.
+   - Negative z-index puts it under the copy. Card's .content is
+     `position: relative; z-index: 1`, which is a stacking context, so this can
+     never escape the card or rise above the text. */
+.sweep {
+  position: absolute;
+  inset-block: -40%;
+  inset-inline-start: -60%;
+  width: 55%;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  rotate: 14deg;
+  background: linear-gradient(
+    to right,
+    transparent 0%,
+    var(--c-sheen-mid) 30%,
+    var(--c-sheen) 50%,
+    var(--c-sheen-mid) 70%,
+    transparent 100%
+  );
+  will-change: transform, opacity;
+}
+
+@media (max-width: 640px) {
+  .card.mentor,
+  .card.advisor {
+    padding: var(--s-8) var(--s-4);
+  }
+
+  .card.coordinator,
+  .card.executive {
+    padding: var(--s-6) var(--s-4);
+  }
+}

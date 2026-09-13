@@ -27,6 +27,7 @@ export default function Section({
   index,
   label,
   heading,
+  eyebrow,
   blurb,
   children,
 }) {
@@ -46,6 +47,15 @@ export default function Section({
           <span className={styles.rule} data-connector aria-hidden="true" />
           <span className={styles.name}>{label}</span>
         </p>
+
+        {/* Optional, and only Events uses it so far: a second mono line that
+            says what the section actually contains, where the index line
+            above only says where you are. */}
+        {eyebrow ? (
+          <p className={styles.eyebrow} data-reveal-item>
+            {eyebrow}
+          </p>
+        ) : null}
 
         {heading ? (
           <h2 className={styles.heading} data-parallax-heading>

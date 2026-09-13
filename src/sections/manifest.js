@@ -5,8 +5,8 @@
 
 export const SECTIONS = [
   { id: 'home', index: '01', label: 'Home', heading: 'IOTA' },
-  { id: 'roadmap', index: '02', label: 'Roadmap', heading: 'Roadmap' },
-  { id: 'resources', index: '03', label: 'Resources', heading: 'Resources' },
+  { id: 'events', index: '02', label: 'Events', heading: 'Events' },
+  { id: 'roadmap', index: '03', label: 'Roadmap', heading: 'Roadmap' },
   { id: 'academics', index: '04', label: 'Academics', heading: 'Academics' },
   { id: 'team', index: '05', label: 'Team', heading: 'Team' },
 ]

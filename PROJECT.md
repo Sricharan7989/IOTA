@@ -125,13 +125,13 @@ instead of sliding across it.
 
 ## Site structure
 
-Single scroll page. Navbar: **Home · Roadmap · Resources · Academics · Team**.
+Single scroll page. Navbar: **Home · Events · Roadmap · Academics · Team**.
 
 | #   | Section   | Role in the journey                          |
 | --- | --------- | -------------------------------------------- |
 | 1   | Home      | Wordmark, tagline, centerpiece at full presence |
-| 2   | Roadmap   | Where the club is going                      |
-| 3   | Resources | What the club gives you                      |
+| 2   | Events    | Workshops and meetups, upcoming and past     |
+| 3   | Roadmap   | Where the club is going                      |
 | 4   | Academics | Semester-wise course material                |
 | 5   | Team      | Who runs it                                  |
 | 6   | Join      | CTA + footer                                 |
@@ -271,7 +271,25 @@ Written down because it shapes the architecture, starting in Phase 1:
       `components/CardGrid.jsx`, so every content section runs on <Card> and
       gets the tilt, sheen and hover treatment.
 
-Phases 1–9 are the proposed shape based on the brief — adjust freely at each
+- [x] **Phase 10 — Team hierarchy** _(complete)_
+      The Team section rebuilt as three tiers where animation intensity
+      signals rank: a single centred Coordinator card with a dramatic
+      entrance, a light sweep and a permanent float; a centred row of
+      Executives with a lighter staggered entrance; and a 4 -> 2 -> 1 grid of
+      domain members on the section baseline. New `components/TeamCard.jsx`
+      and `hooks/useTeamReveal.js`. DESIGN.md §8, "Rank by intensity".
+
+- [x] **Phase 11 — Events, and a five-tier Team** _(complete)_
+      Resources removed entirely (section, data, nav entry, and the now-orphan
+      `CardGrid`); sections renumbered. New Events section - `data/events.js`,
+      `components/EventCard.jsx`, `sections/Events.jsx` - with an Upcoming
+      block that carries a real empty state and a Past grid. Team rebuilt from
+      three tiers to FIVE (Mentor, Advisor, Coordinators, Executives, Members)
+      but still only THREE animation intensities: five distinct entrances on
+      one screen is noise, so size separates all five and motion separates
+      them into bands. `<Section>` gained an optional `eyebrow`.
+
+Phases 1–11 are the proposed shape based on the brief — adjust freely at each
 kickoff. Phase 0 is the only one that is settled.
 
 ---
@@ -289,8 +307,9 @@ kickoff. Phase 0 is the only one that is settled.
   **Still outstanding**, all currently marked PLACEHOLDER in their data files:
   - `data/resources.js` — the six categories are the real decision; the copy
     and every url are stand-ins.
-  - `data/team.js` — deliberately roles rather than people. Inventing
-    plausible names and handles for a real club would put fake people on a
-    real page, and they would be easy to leave there by accident. Add a
-    `name` per entry once the committee is confirmed.
+  - `data/team.js` — now three tiers of placeholder PEOPLE. Names are Greek
+    letters: on-brand for a club called IOTA and impossible to mistake for a
+    real student, which is the point. Swap the names, write one honest line
+    of bio each, and point the links at real profiles. The roles are the real
+    decision and should survive as written.
   - `data/academics.js` — every resource url is still `#`.

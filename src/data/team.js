@@ -1,78 +1,225 @@
 /* IOTA - who runs it.
    Single source of truth for the Team section.
 
-   Schema, per entry:
-     { id, eyebrow, title, body, links: [ { label, url } ] }
+   FIVE tiers, exported separately rather than as one list with a `tier`
+   field: each renders in a different layout, and no loop could usefully walk
+   all five. Keeping them apart means the file reads top to bottom exactly as
+   the section renders.
 
-   The shape is shared with data/resources.js so both render through
-   <CardGrid>.
+     MENTOR        one person, largest card
+     ADVISOR       one person, largest card
+     COORDINATORS  a centred row, large-medium
+     EXECUTIVES    a centred row, medium
+     MEMBERS       a responsive grid, standard
+
+   Five tiers but only THREE animation intensities - see useTeamReveal. Size
+   separates all five; motion separates them into groups, because five
+   different entrances on one screen is noise rather than hierarchy.
+
+   Schema, per person:
+     { id, name, role, bio, photo, github, linkedin }
+
+   Named fields rather than a `links` array, because these get filled in by
+   whoever joins the committee: "put your GitHub URL here" is an instruction
+   anyone can follow, and an array of { label, url } objects is not.
+
+   Every one of photo / github / linkedin is OPTIONAL. Leave it an empty
+   string and it simply does not render - no empty pill, no broken image, no
+   placeholder.
+
+   ---- Photos ----------------------------------------------------------
+   Images live in `public/team/`. See the README in that folder. The path
+   here is the SERVED path, so it starts with a slash:
+
+       photo: '/team/member-ai-ml.jpg',
+
+   No photo, or a path that 404s, falls back to the gradient monogram built
+   from the person's initials. That fallback is a design, not a stopgap.
+   ----------------------------------------------------------------------
 
    ============================== PLACEHOLDER ==============================
-   This section describes ROLES, not people, and that is deliberate rather
-   than a shortcut: inventing plausible-looking names and handles for a real
-   student club would put fake people on a real page, and they would be very
-   easy to leave there by accident.
+   EVERY PERSON BELOW IS A PLACEHOLDER. Names are Greek letters, which is
+   both on-brand for a club called IOTA and impossible to mistake for a real
+   student - deliberately, because plausible-looking invented names on a real
+   club's page are very easy to leave there by accident. Iota is skipped
+   throughout: that one is the club.
 
-   When the committee is confirmed, add a `name` to each entry and render it
-   above `title` in CardGrid - the roles and their remits below should mostly
-   survive as written.
+   To make this real: swap `name`, write one honest line of `bio`, drop a
+   photo in public/team/, and paste real profile URLs. The ROLES are the real
+   decision and should mostly survive as written; the domain roles at the
+   bottom match the nine tracks in data/roadmaps.js.
    ========================================================================= */
 
-export const TEAM = [
+/* PLACEHOLDER - tier 1. */
+export const MENTOR = {
+  id: 'mentor',
+  name: 'Alpha',
+  role: 'Club Mentor',
+  bio: 'Faculty mentor. Opens the doors the committee cannot open on its own.',
+  // EXAMPLE - swap example.jpg for a real photo in public/team/.
+  photo: '/team/example.jpg',
+  github: 'https://github.com/Sricharan7989',
+  // Blank on purpose: an empty social is dropped, not rendered empty.
+  linkedin: '',
+}
+
+/* PLACEHOLDER - tier 2. */
+export const ADVISOR = {
+  id: 'advisor',
+  name: 'Beta',
+  role: 'Club Advisor',
+  bio: 'Keeps the long view. Where the club should be two years from now.',
+  photo: '',
+  github: '',
+  linkedin: '',
+}
+
+/* PLACEHOLDER - tier 3. Roles are one word each: the tier heading above the
+   row already says "Coordinators". */
+export const COORDINATORS = [
   {
-    id: 'president',
-    eyebrow: 'Core',
-    title: 'President',
-    body: 'Sets the direction for the year, runs the committee, and is the club’s face to the institute.',
-    links: [],
+    id: 'coord-technical',
+    name: 'Gamma',
+    role: 'Technical',
+    bio: 'Owns the roadmaps and every workshop that comes out of them.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
   {
-    id: 'vice-president',
-    eyebrow: 'Core',
-    title: 'Vice President',
-    body: 'Keeps the calendar honest. Owns delivery on everything the club has promised its members.',
-    links: [],
+    id: 'coord-operations',
+    name: 'Delta',
+    role: 'Operations',
+    bio: 'Keeps the calendar honest and the promises kept.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
   {
-    id: 'technical',
-    eyebrow: 'Domains',
-    title: 'Technical Leads',
-    body: 'One per domain. They write the roadmaps, run the workshops, and answer the questions nobody else will.',
-    links: [],
+    id: 'coord-outreach',
+    name: 'Epsilon',
+    role: 'Outreach',
+    bio: 'Brings in speakers, keeps alumni close, holds the door open.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+]
+
+/* PLACEHOLDER - tier 4. */
+export const EXECUTIVES = [
+  {
+    id: 'exec-events',
+    name: 'Zeta',
+    role: 'Events',
+    bio: 'Rooms, dates, and the small things that decide whether a session happens.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
   {
-    id: 'projects',
-    eyebrow: 'Domains',
-    title: 'Projects Lead',
-    body: 'Matches members to club projects and keeps the repositories alive between semesters.',
-    links: [],
+    id: 'exec-design',
+    name: 'Eta',
+    role: 'Design & Media',
+    bio: 'Everything the club looks and sounds like, this page included.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
   {
-    id: 'academics',
-    eyebrow: 'Members',
-    title: 'Academics Lead',
-    body: 'Collects, checks and files the course material so the archive is trustworthy rather than merely large.',
-    links: [],
+    id: 'exec-projects',
+    name: 'Theta',
+    role: 'Projects',
+    bio: 'Matches members to club projects and keeps the repos alive.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
   {
-    id: 'design',
-    eyebrow: 'Outreach',
-    title: 'Design and Media',
-    body: 'Everything the club looks and sounds like, this page included.',
-    links: [],
+    id: 'exec-community',
+    name: 'Kappa',
+    role: 'Community',
+    bio: 'Makes sure first-years know the door is open.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+]
+
+/* PLACEHOLDER - tier 5. One lead per domain. These roles mirror
+   data/roadmaps.js, so a member reading a track knows who to ask about it. */
+export const MEMBERS = [
+  {
+    id: 'member-ai-ml',
+    name: 'Lambda',
+    role: 'AI / ML',
+    bio: 'Models, from first principles to production.',
+    // EXAMPLE - the same file at the smallest tier, proving the crop scales.
+    photo: '/team/example.jpg',
+    github: '',
+    linkedin: 'https://www.linkedin.com/',
   },
   {
-    id: 'events',
-    eyebrow: 'Outreach',
-    title: 'Events',
-    body: 'Rooms, dates, food and the hundred small things that decide whether a session actually happens.',
-    links: [],
+    id: 'member-web',
+    name: 'Mu',
+    role: 'Web Dev',
+    bio: 'Ships the things everyone else demos.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
   {
-    id: 'outreach',
-    eyebrow: 'Outreach',
-    title: 'Community',
-    body: 'Brings in speakers, keeps alumni close, and makes sure first-years know the door is open.',
-    links: [],
+    id: 'member-cv',
+    name: 'Nu',
+    role: 'Computer Vision',
+    bio: 'Pixels in, understanding out.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+  {
+    id: 'member-nlp',
+    name: 'Xi',
+    role: 'NLP',
+    bio: 'Language models, and the evals that keep them honest.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+  {
+    id: 'member-gen-ai',
+    name: 'Omicron',
+    role: 'Gen AI',
+    bio: 'Retrieval, prompting, and apps built around both.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+  {
+    id: 'member-agentic',
+    name: 'Pi',
+    role: 'Agentic AI',
+    bio: 'Agents that use tools without falling over.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+  {
+    id: 'member-game',
+    name: 'Rho',
+    role: 'Game Dev',
+    bio: 'Prototypes on Friday, playtests on Monday.',
+    photo: '',
+    github: '',
+    linkedin: '',
+  },
+  {
+    id: 'member-app',
+    name: 'Sigma',
+    role: 'App Dev',
+    bio: 'Everything that has to work on a phone in a lecture hall.',
+    photo: '',
+    github: '',
+    linkedin: '',
   },
 ]

@@ -221,6 +221,20 @@
   color: var(--c-blaze-cool);
 }
 
+.stage[data-level='beginner'] .resourcesLabel {
+  color: var(--c-blaze-cool);
+}
+
+.stage[data-level='beginner'] .pill {
+  border-color: color-mix(in srgb, var(--c-blaze-cool) 38%, transparent);
+}
+
+.stage[data-level='beginner'] .pill:hover,
+.stage[data-level='beginner'] .pill:focus-visible {
+  border-color: var(--c-blaze-cool);
+  box-shadow: var(--glow-cool);
+}
+
 /* ---- Intermediate: lit ---- */
 
 .stage[data-level='intermediate'] .node {
@@ -245,6 +259,20 @@
 
 .stage[data-level='intermediate'] .stageIndex {
   color: var(--c-blaze-mid);
+}
+
+.stage[data-level='intermediate'] .resourcesLabel {
+  color: var(--c-blaze-mid);
+}
+
+.stage[data-level='intermediate'] .pill {
+  border-color: color-mix(in srgb, var(--c-blaze-mid) 38%, transparent);
+}
+
+.stage[data-level='intermediate'] .pill:hover,
+.stage[data-level='intermediate'] .pill:focus-visible {
+  border-color: var(--c-blaze-mid);
+  box-shadow: var(--glow-mid);
 }
 
 /* ---- Advanced: blue fire ---- */
@@ -286,6 +314,20 @@
 
 .stage[data-level='advanced'] .stageIndex {
   color: var(--c-blaze-hot);
+}
+
+.stage[data-level='advanced'] .resourcesLabel {
+  color: var(--c-blaze-hot);
+}
+
+.stage[data-level='advanced'] .pill {
+  border-color: color-mix(in srgb, var(--c-blaze-hot) 38%, transparent);
+}
+
+.stage[data-level='advanced'] .pill:hover,
+.stage[data-level='advanced'] .pill:focus-visible {
+  border-color: var(--c-blaze-hot);
+  box-shadow: var(--glow-hot);
 }
 
 .stage[data-level='advanced'] .item::before {
@@ -331,6 +373,13 @@
    duration override, which would leave each layer frozen on whatever its last
    keyframe happened to be. */
 @media (prefers-reduced-motion: reduce) {
+  /* Static, readable pills. The hover STATE stays - reduced motion means less
+     movement, not less feedback (DESIGN.md 8) - it just arrives instantly
+     instead of easing. */
+  .pill {
+    transition: none;
+  }
+
   .spineHeat,
   .stage[data-level='advanced'] .node::before,
   .stage[data-level='advanced'] .cardWrap::before,
@@ -415,6 +464,91 @@
   border-radius: 50%;
   background: var(--c-violet);
   transform: translateY(-2px);
+}
+
+/* ---- Resource pills ---- */
+
+/* Sits under the topics, inside the card, so Card's overflow clip guarantees
+   nothing escapes however many pills a stage carries. */
+.resources {
+  margin-block-start: var(--s-4);
+  padding-block-start: var(--s-4);
+  border-block-start: 1px solid var(--c-hairline);
+}
+
+.resourcesLabel {
+  margin-block-end: var(--s-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  /* Recoloured per blaze level below. */
+  color: var(--c-text-faint);
+}
+
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+}
+
+.pill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  /* Never wider than the card, whatever the label. Long labels wrap inside
+     the pill rather than being truncated - a resource you cannot read the
+     name of is not a resource. */
+  max-width: 100%;
+  padding: var(--s-1) var(--s-3);
+  border: 1px solid var(--c-hairline);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--c-surface) 55%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  color: var(--c-text-mute);
+  transition:
+    color var(--d-fast) var(--e-out),
+    border-color var(--d-fast) var(--e-out),
+    background-color var(--d-fast) var(--e-out),
+    box-shadow var(--d-fast) var(--e-out);
+}
+
+.pill:hover,
+.pill:focus-visible {
+  color: var(--c-text);
+  background: color-mix(in srgb, var(--c-surface-2) 75%, transparent);
+}
+
+/* The type tag. This is the ONLY thing type colours - the pill's frame is the
+   blaze level's. Two signals, two channels, no collision. */
+.tag {
+  flex: 0 0 auto;
+  font-family: var(--f-mono);
+  font-size: 0.625rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-res-ref);
+}
+
+.tag[data-group='read'] {
+  color: var(--c-res-read);
+}
+
+.tag[data-group='do'] {
+  color: var(--c-res-do);
+}
+
+.tag[data-group='video'] {
+  color: var(--c-res-video);
+}
+
+.tag[data-group='paper'] {
+  color: var(--c-res-paper);
+}
+
+.pillLabel {
+  min-width: 0;
 }
 
 @media (max-width: 640px) {

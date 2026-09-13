@@ -17,8 +17,8 @@ import Preloader from './components/Preloader'
 import ShiftMarker from './components/ShiftMarker'
 import CanvasPlaceholder from './components/CanvasPlaceholder'
 import Home from './sections/Home'
+import Events from './sections/Events'
 import Roadmap from './sections/Roadmap'
-import Resources from './sections/Resources'
 import Academics from './sections/Academics'
 import Team from './sections/Team'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
@@ -67,11 +67,13 @@ export default function App() {
         <Home revealed={introDone} />
 
         {/* The threshold between the two worlds. Also the boundary divider,
-            which is why Roadmap carries no top rule of its own. */}
+            which is why the FIRST content section below carries no top rule of
+            its own - see the note on `.section + .section` in
+            Section.module.css. Reorder these and that follows automatically. */}
         <ShiftMarker />
 
+        <Events />
         <Roadmap />
-        <Resources />
         <Academics />
         <Team />
       </main>

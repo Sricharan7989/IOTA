@@ -48,6 +48,27 @@ const LEVEL_KEYS = {
 
 const levelKey = (level) => LEVEL_KEYS[level] ?? 'beginner'
 
+/* Resource types collapse into four colour buckets. Nine distinct colours
+   would be a rainbow; these four each mean something - reference, reading,
+   things you use, and video - plus Paper, kept deliberately quiet.
+
+   The bucket only ever colours the small TAG inside a pill. The pill's own
+   frame belongs to the stage's blaze level, so a reader gets both signals at
+   once without either overwriting the other. */
+const TYPE_GROUPS = {
+  Docs: 'ref',
+  Course: 'ref',
+  Article: 'read',
+  Book: 'read',
+  Roadmap: 'read',
+  Tool: 'do',
+  Practice: 'do',
+  YouTube: 'video',
+  Paper: 'paper',
+}
+
+const typeGroup = (type) => TYPE_GROUPS[type] ?? 'ref'
+
 export default function RoadmapTimeline({ slug, stages }) {
   const root = useRef(null)
   const track = useRef(null)
@@ -257,6 +278,44 @@ export default function RoadmapTimeline({ slug, stages }) {
                     </li>
                   ))}
                 </ul>
+
+                {/* Optional so a stage written without them still renders.
+                    type|url|label is unique within a stage - verified - so it
+                    is a safe key. */}
+                {stage.resources?.length ? (
+                  <div className={styles.resources}>
+                    <p className={styles.resourcesLabel}>Resources</p>
+
+                    <ul className={styles.pills}>
+                      {stage.resources.map((resource) => (
+                        <li
+                          key={`${resource.type}|${resource.url}|${resource.label}`}
+                        >
+                          <a
+                            className={styles.pill}
+                            href={resource.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            // The visible text already carries type and
+                            // label; this only adds what a sighted user gets
+                            // from the pill leaving the page.
+                            aria-label={`${resource.label} — ${resource.type}, opens in a new tab`}
+                          >
+                            <span
+                              className={styles.tag}
+                              data-group={typeGroup(resource.type)}
+                            >
+                              {resource.type}
+                            </span>
+                            <span className={styles.pillLabel}>
+                              {resource.label}
+                            </span>
+                          </a>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
               </Card>
             </div>
           </li>

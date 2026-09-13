@@ -145,6 +145,23 @@
     transparent 100%
   );
 
+  /* Resource pill type tags.
+
+     Two signals live on one pill and must not fight over the same channel:
+     the TYPE colours the small tag inside it, the stage's blaze LEVEL colours
+     its frame and hover glow. Type says what a link is; level says how hard
+     the stage is. One would overwrite the other if they shared a property.
+
+     Four buckets, not nine - nine colours would be a rainbow, and DESIGN.md 1
+     spends colour deliberately. */
+  --c-res-ref: var(--c-blue); /* Docs, Course - the reference end */
+  --c-res-read: #7d80ff; /* Article, Book, Roadmap - the midpoint of --g-iota */
+  --c-res-do: var(--c-violet); /* Tool, Practice - things you use */
+  /* The single warm colour in the entire system, and it earns its place by
+     being instantly recognisable. Nothing else may borrow it. */
+  --c-res-video: #ff8fa3; /* YouTube */
+  --c-res-paper: var(--c-text-faint); /* Paper - deliberately quiet */
+
   /* Node glows. Same three steps, as box-shadows. */
   --glow-cool: 0 0 14px rgba(63, 99, 200, 0.4);
   --glow-mid: 0 0 26px rgba(93, 134, 255, 0.55);

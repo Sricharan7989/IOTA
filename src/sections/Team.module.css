@@ -1,0 +1,160 @@
+/* IOTA - Team section layout.
+   Five tiers stacked with generous air between them. The gaps are part of the
+   hierarchy: crowding the mentor against the advisor would undo most of what
+   the size step buys. */
+
+.tiers {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-24);
+}
+
+/* Heading plus its cards. The inner gap is much tighter than the gap between
+   tiers, so a heading reads as belonging to the group under it rather than
+   floating between two. */
+.tier {
+  display: flex;
+  flex-direction: column;
+  gap: var(--s-8);
+}
+
+/* ---- Tier headings ---- */
+
+/* A rule, a mono label, a rule - the same way ShiftMarker marks the hero
+   boundary and Events marks its blocks. Full width of the section, so all
+   five line up with each other regardless of how wide the cards under them
+   are. */
+.tierHeading {
+  display: flex;
+  align-items: center;
+  gap: var(--s-4);
+  width: 100%;
+}
+
+.tierLabel {
+  flex: 0 0 auto;
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  font-weight: 400;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--c-text-mute);
+}
+
+/* Solid at the label, dissolving toward the page edge. A full-bleed hard line
+   would compete with the section's own divider. */
+.tierRule {
+  flex: 1;
+  height: 1px;
+}
+
+.left {
+  background: linear-gradient(to right, transparent, var(--content-divider));
+}
+
+.right {
+  background: linear-gradient(to left, transparent, var(--content-divider));
+}
+
+/* ---- TOP tiers: mentor and advisor ---- */
+
+/* The entrance target. Centred by margin rather than by a flex parent so the
+   card keeps a real max-width instead of being stretched by the column. */
+.solo {
+  width: 100%;
+  max-width: 34rem;
+  margin-inline: auto;
+  will-change: transform, opacity;
+}
+
+/* The float target, and the top tier's permanent halo.
+
+   The glow lives here rather than on the card for a specific reason: Card
+   owns border-color and box-shadow as its hover channel, and a competing rule
+   on the card itself would tie on specificity and silently kill the hover. A
+   wrapper has neither problem, and the shadow still reads as belonging to the
+   card because the radius matches. */
+.float {
+  border-radius: 14px;
+  box-shadow: var(--glow-card);
+  will-change: transform;
+}
+
+/* ---- MID tiers: coordinators and executives ---- */
+
+/* Centred by justify-content, so a short row sits in the middle of the page
+   rather than hugging the left edge. */
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--s-6);
+}
+
+.cell {
+  display: flex;
+  will-change: transform, opacity;
+}
+
+/* Coordinators sit above executives, so their cards are wider as well as
+   taller - width is the size signal you read first in a centred row. */
+.coordCell {
+  flex: 0 1 21rem;
+  max-width: 24rem;
+}
+
+.execCell {
+  /* Sized so four sit on one row inside --max-w and still have somewhere to
+     shrink to; below that they wrap, two and two, and stay centred. */
+  flex: 0 1 17rem;
+  max-width: 20rem;
+}
+
+/* ---- BASE tier: the domain members ---- */
+
+/* Four columns, stepping to two then one. Explicit counts rather than
+   auto-fill: the tier is meant to read as an even block under the four above
+   it, and auto-fill would let the column count drift with the viewport. */
+.memberGrid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--s-6);
+}
+
+.memberCell {
+  display: flex;
+  will-change: transform;
+}
+
+@media (max-width: 1024px) {
+  .memberGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .tiers {
+    gap: var(--s-16);
+  }
+
+  .tier {
+    gap: var(--s-6);
+  }
+
+  .memberGrid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-4);
+  }
+
+  .row {
+    gap: var(--s-4);
+  }
+
+  /* One per row on a phone, and still centred. */
+  .coordCell,
+  .execCell {
+    flex: 1 1 100%;
+    max-width: none;
+  }
+}

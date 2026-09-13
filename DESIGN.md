@@ -89,6 +89,38 @@ blue-violet accent and has no such failure mode. If you want gradient text
 anywhere, keep every ancestor filter-free and `will-change`-free, and prove it
 renders before shipping it.
 
+### Resource tags, and the one warm colour
+
+The roadmap's resource pills carry two signals at once, and they must never
+share a channel:
+
+| Signal | Owns | Says |
+| ------ | ---- | ---- |
+| Resource **type** | the small tag inside the pill | what kind of link this is |
+| Stage **level** | the pill's border and hover glow | how hard the stage is |
+
+Put both on the border and one silently overwrites the other.
+
+Nine resource types collapse into **four** colour buckets, because nine
+colours is a rainbow and §1 spends colour deliberately:
+
+| Bucket | Token | Types |
+| ------ | ----- | ----- |
+| Reference | `--c-res-ref` | Docs, Course |
+| Reading | `--c-res-read` | Article, Book, Roadmap |
+| Things you use | `--c-res-do` | Tool, Practice |
+| Video | `--c-res-video` | YouTube |
+| Quiet | `--c-res-paper` | Paper |
+
+`--c-res-video` (`#FF8FA3`) is **the only warm colour in the entire system**.
+It earns its place by being instantly recognisable as video, and nothing else
+may borrow it — a second warm accent anywhere and the blue-violet stops
+reading as a decision.
+
+Tags render at 10px, so every bucket has to clear the full 4.5:1 rather than
+the large-text 3:1. All five do, on the pill's own ground over the brightest
+composite the content room reaches.
+
 ### The blaze ramp
 
 The roadmap's signature effect, and the only place in the system where colour
@@ -299,7 +331,7 @@ a token, and every token is shared.
 
 ### The card is the unit
 
-`components/Card.jsx` is the one surface: roadmap stage, course, resource, team
+`components/Card.jsx` is the one surface: roadmap stage, course, event, team
 member. It owns the raised ground, the violet hairline, and all three pointer
 responses, so no section can invent its own.
 
@@ -330,6 +362,39 @@ you should not be able to point at them — only notice if they stop.**
 One indicator slides and morphs between chips; chips do not switch their own
 fill on and off. Watching the thing you picked travel to where you picked it is
 what ties a selector to the content swapping underneath it.
+
+### Rank by intensity
+
+Where a section has a hierarchy, **how much a card is allowed to move says
+where it sits in that hierarchy**. Team is the worked example: a mentor, an
+advisor, three coordinators, four executives, eight domain leads.
+
+**Sizes and intensities do not have to be one to one.** Team has five sizes
+but three intensities, and that mismatch is deliberate: five different
+entrances on one screen reads as noise, not as rank. Size separates every
+tier; motion only has to sort them into bands.
+
+| Band | Tiers | Entrance | After |
+| ---- | ----- | -------- | ----- |
+| TOP | Mentor, Advisor | scale + rise from further, 1.4s | a light sweep, then a permanent gentle float |
+| MID | Coordinators, Executives | rise + fade, 0.85s, staggered per row | nothing |
+| BASE | Members | the section baseline, staggered | nothing |
+
+- **Say it twice.** Size carries the rank with the page frozen; intensity
+  carries it again once anything moves. Either alone is a weak signal, and a
+  page that only announces its hierarchy while animating has none for anyone
+  who lands mid-scroll.
+- **The bottom tier must get nothing special.** It is the baseline every other
+  section already uses. Adding a flourish there collapses the ramp — the same
+  rule as the blaze (§2): a tier only means something next to the others.
+- Anything with a continuous animation needs **three nested elements**:
+  entrance, loop, and the card's own pointer tilt. All three write
+  `transform`, so on one node the loop erases the entrance's resting position
+  and the tilt fights both.
+- Pause infinite loops when their section is off screen. A float has no reason
+  to tick for a page nobody is looking at.
+- `prefers-reduced-motion` drops the loop and the sweep and keeps every size.
+  Rank is structure, not movement, so it must survive with the motion gone.
 
 ### The floor
 

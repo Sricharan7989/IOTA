@@ -14,10 +14,13 @@
    room's structure rather than as a box around any one section, and drawn in
    from the left as the section arrives rather than sitting there.
 
-   Hidden by default and shown only by `.section + .section`: the FIRST content
-   section is preceded by <ShiftMarker>, not by a section, so it is skipped
-   here and the marker's own rule serves as the hero -> content boundary. Two
-   lines that close together would read as a mistake. */
+   Hidden by default and shown only by `.section + .section`: whichever
+   content section comes FIRST is preceded by <ShiftMarker>, not by a section,
+   so it is skipped here and the marker's own rule serves as the hero ->
+   content boundary. Two lines that close together would read as a mistake.
+
+   Written as a sibling rule rather than naming a section, so reordering the
+   sections in App.jsx moves the exemption with them. */
 .divider {
   display: none;
   position: absolute;
@@ -89,6 +92,18 @@
 }
 
 /* ---- Heading ---- */
+
+/* The optional second eyebrow. Sits directly on the big title, so it is
+   tighter to it than the index line above and takes the accent rather than a
+   grey - two identical mono lines stacked would read as one thing wrapped. */
+.eyebrow {
+  margin-bottom: var(--s-3);
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-blue);
+}
 
 /* The section's title card. The biggest type below the hero, on purpose - the
    mono index above it is metadata, and metadata alone is not an opening.
