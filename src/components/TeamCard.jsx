@@ -28,7 +28,7 @@ const TIERS = ['mentor', 'advisor', 'coordinator', 'executive', 'member']
 
 /* The two tiers that get the glow sweep. Sweeping every tier would make it
    decoration; sweeping exactly the top two is what makes it rank. */
-const TOP_TIERS = ['mentor', 'advisor']
+const TOP_TIERS = ['mentor', 'advisor', 'coordinator']
 
 /* Initials, capped at two. A single-word name gives one letter, which is what
    the placeholder Greek names produce and what most handles produce too. */
@@ -79,8 +79,6 @@ export default function TeamCard({ person, tier = 'member', showRole = true }) {
           aria-hidden because the name is rendered right below it - a screen
           reader announcing the photo as well would just say it twice. */}
       <span className={styles.avatar} aria-hidden="true">
-        {monogram(person.name)}
-
         {person.photo ? (
           <img
             className={styles.photo}
@@ -95,7 +93,7 @@ export default function TeamCard({ person, tier = 'member', showRole = true }) {
               event.currentTarget.style.display = 'none'
             }}
           />
-        ) : null}
+        ) : monogram(person.name)}
       </span>
 
       {/* h4 because the tier heading above this card is the h3, under the

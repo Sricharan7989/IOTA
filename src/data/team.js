@@ -50,176 +50,292 @@
    bottom match the nine tracks in data/roadmaps.js.
    ========================================================================= */
 
+import mentorPhoto from "../assets/team/mentor.jpg";
+import bhanuPhoto from "../assets/team/bhanu.jpeg";
+import pheelipPhoto from "../assets/team/pheelip.jpeg";
+import coordinatorPhoto from "../assets/team/siddharth.png";
+
+import jyothikiranPhoto from "../assets/team/jyothikiran.jpeg";
+import sujaiPhoto from "../assets/team/sujai.jpeg";
+import sahasraPhoto from "../assets/team/sahasra.jpeg";
+import sricharanPhoto from "../assets/team/sricharan.jpeg";
+
+import ayushPhoto from "../assets/team/ayush bisht.jpeg";
+import hrishikeshPhoto from "../assets/team/Hrishikesh.png";
+import avinashPhoto from "../assets/team/avinash.jpeg";
+import rushithPhoto from "../assets/team/rushith.jpeg";
+import jahnaviPhoto from "../assets/team/jahnavi.png";
+import KmedhaPhoto from "../assets/team/k medha.png";
+import karthikPhoto from "../assets/team/karthik.PNG";
+import krishPhoto from "../assets/team/krish.jpeg";
+import kuraPhoto from "../assets/team/kura sainishant.png";
+import madhusriPhoto from "../assets/team/madhusri.png";
+import JagadarshPhoto from "../assets/team/meda jagadarsh.jpeg";
+import sathyanarayananPhoto from "../assets/team/sathyanarayn.png";
+import tejaswiniPhoto from "../assets/team/tejaswini.jpeg";
+import vikhyatPhoto from "../assets/team/vikhyat.jpeg";
+import sivaPhoto from "../assets/team/Siva_varaprasad.png";
+import sriharshaPhoto from "../assets/team/sriharsha.jpeg";
+import tholkappianPhoto from "../assets/team/tholkappian.jpeg";
+import gauthamPhoto from "../assets/team/gautham.png";
+
 /* PLACEHOLDER - tier 1. */
 export const MENTOR = {
-  id: 'mentor',
-  name: 'Alpha',
-  role: 'Club Mentor',
-  bio: 'Faculty mentor. Opens the doors the committee cannot open on its own.',
-  // EXAMPLE - swap example.jpg for a real photo in public/team/.
-  photo: '/team/example.jpg',
-  github: 'https://github.com/Sricharan7989',
-  // Blank on purpose: an empty social is dropped, not rendered empty.
-  linkedin: '',
-}
+  id: "mentor",
+  name: "Dr. Pavan Kumar",
+  role: "Club Mentor",
+  photo: mentorPhoto,
+  linkedin: "",
+};
 
 /* PLACEHOLDER - tier 2. */
-export const ADVISOR = {
-  id: 'advisor',
-  name: 'Beta',
-  role: 'Club Advisor',
-  bio: 'Keeps the long view. Where the club should be two years from now.',
-  photo: '',
-  github: '',
-  linkedin: '',
-}
+export const ADVISOR = [
+  {
+    id: "advisor",
+    name: "Pheelip Raipure",
+    role: "Club Advisor",
+    photo: pheelipPhoto,
+    github: "",
+    linkedin: "",
+  },
+  {
+    id: "advisor",
+    name: "Bhanu Panuganti",
+    role: "Club Advisor",
+    photo: bhanuPhoto,
+    github: "",
+    linkedin: "",
+  },
+];
 
 /* PLACEHOLDER - tier 3. Roles are one word each: the tier heading above the
    row already says "Coordinators". */
-export const COORDINATORS = [
-  {
-    id: 'coord-technical',
-    name: 'Gamma',
-    role: 'Technical',
-    bio: 'Owns the roadmaps and every workshop that comes out of them.',
-    photo: '',
-    github: '',
-    linkedin: '',
-  },
-  {
-    id: 'coord-operations',
-    name: 'Delta',
-    role: 'Operations',
-    bio: 'Keeps the calendar honest and the promises kept.',
-    photo: '',
-    github: '',
-    linkedin: '',
-  },
-  {
-    id: 'coord-outreach',
-    name: 'Epsilon',
-    role: 'Outreach',
-    bio: 'Brings in speakers, keeps alumni close, holds the door open.',
-    photo: '',
-    github: '',
-    linkedin: '',
-  },
-]
+export const COORDINATOR = {
+  id: "coord-technical",
+  name: "Siddharth",
+  role: "Club Co-ordinator",
+  photo: coordinatorPhoto,
+  github: "https://github.com/Siddharth-k7",
+  linkedin: "https://www.linkedin.com/in/siddharth-kancharla/",
+};
 
 /* PLACEHOLDER - tier 4. */
 export const EXECUTIVES = [
   {
-    id: 'exec-events',
-    name: 'Zeta',
-    role: 'Events',
-    bio: 'Rooms, dates, and the small things that decide whether a session happens.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "exec-events",
+    name: "Jyothikiran",
+    role: "Game Development",
+    photo: jyothikiranPhoto,
+    github: "https://github.com/jyothikiran25",
+    linkedin: "https://www.linkedin.com/in/jyothikiran-pothula-729933322",
   },
   {
-    id: 'exec-design',
-    name: 'Eta',
-    role: 'Design & Media',
-    bio: 'Everything the club looks and sounds like, this page included.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "exec-design",
+    name: "Sujai",
+    role: "App Development",
+    photo: sujaiPhoto,
+    github: " https://github.com/Sujaicodes",
+    linkedin: " https://www.linkedin.com/in/sujai-shukla-74a3413b6/",
   },
   {
-    id: 'exec-projects',
-    name: 'Theta',
-    role: 'Projects',
-    bio: 'Matches members to club projects and keeps the repos alive.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "exec-projects",
+    name: "Sahasra",
+    role: "AI / ML",
+    photo: sahasraPhoto,
+    github: "https://github.com/muttadisahasra-maker",
+    linkedin: "https://www.linkedin.com/in/sahasra-muttadi-2091143ab/",
   },
   {
-    id: 'exec-community',
-    name: 'Kappa',
-    role: 'Community',
-    bio: 'Makes sure first-years know the door is open.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "exec-community",
+    name: "Sricharan",
+    role: "AI Engineer",
+    photo: sricharanPhoto,
+    github: "https://github.com/Sricharan7989",
+    linkedin: "www.linkedin.com/in/sricharan-k-777sk",
   },
-]
+];
 
 /* PLACEHOLDER - tier 5. One lead per domain. These roles mirror
    data/roadmaps.js, so a member reading a track knows who to ask about it. */
 export const MEMBERS = [
   {
-    id: 'member-ai-ml',
-    name: 'Lambda',
-    role: 'AI / ML',
-    bio: 'Models, from first principles to production.',
-    // EXAMPLE - the same file at the smallest tier, proving the crop scales.
-    photo: '/team/example.jpg',
-    github: '',
-    linkedin: 'https://www.linkedin.com/',
+    id: "lead-tholkappian",
+    name: "Tholkappian",
+    role: "Web Development-LEAD",
+    bio: "",
+    photo: tholkappianPhoto,
+    github: "https://github.com/TitanThols",
+    linkedin: "https://www.linkedin.com/in/tholkappian-murugesan-bb401a326/",
   },
+
   {
-    id: 'member-web',
-    name: 'Mu',
-    role: 'Web Dev',
-    bio: 'Ships the things everyone else demos.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-vikhyat-gupta",
+    name: "Vikhyat Gupta",
+    role: "AI Engineering",
+    bio: "",
+    photo: vikhyatPhoto,
+    github: "https://github.com/vikky781",
+    linkedin: "https://www.linkedin.com/in/vikhyat-gupta-iiits/",
   },
+
   {
-    id: 'member-cv',
-    name: 'Nu',
-    role: 'Computer Vision',
-    bio: 'Pixels in, understanding out.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-krish-gupta",
+    name: "Krish gupta",
+    role: "Web Development",
+    bio: "",
+    photo: krishPhoto,
+    github: "https://github.com/guptakrish490",
+    linkedin: "https://www.linkedin.com/in/krish--gupta/",
   },
+
   {
-    id: 'member-nlp',
-    name: 'Xi',
-    role: 'NLP',
-    bio: 'Language models, and the evals that keep them honest.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-tejaswini-r",
+    name: "Tejaswini ",
+    role: "Web Development",
+    bio: "",
+    photo: tejaswiniPhoto,
+    github: "https://github.com/tejaswinir013",
+    linkedin: "https://www.linkedin.com/in/tejaswini-r-989114391",
   },
+
   {
-    id: 'member-gen-ai',
-    name: 'Omicron',
-    role: 'Gen AI',
-    bio: 'Retrieval, prompting, and apps built around both.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-dinesh-karthik-busi",
+    name: "Dinesh Karthik Busi",
+    role: "Game Development",
+    bio: "",
+    photo: karthikPhoto,
+    github: "Sirnnn",
+    linkedin: "",
   },
+
   {
-    id: 'member-agentic',
-    name: 'Pi',
-    role: 'Agentic AI',
-    bio: 'Agents that use tools without falling over.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-medha-kethari",
+    name: "Medha Kethari",
+    role: "Data Science",
+    bio: "",
+    photo: KmedhaPhoto,
+    github: "https://github.com/medha7814",
+    linkedin: "",
   },
+
   {
-    id: 'member-game',
-    name: 'Rho',
-    role: 'Game Dev',
-    bio: 'Prototypes on Friday, playtests on Monday.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-jahnavi-yerra",
+    name: "Jahnavi Yerra",
+    role: "Data Science",
+    bio: "",
+    photo: jahnaviPhoto,
+    github: "https://github.com/jahnaviy25-alt",
+    linkedin: "https://www.linkedin.com/in/jahnavi-yerra-4b7b61409",
   },
+
   {
-    id: 'member-app',
-    name: 'Sigma',
-    role: 'App Dev',
-    bio: 'Everything that has to work on a phone in a lecture hall.',
-    photo: '',
-    github: '',
-    linkedin: '',
+    id: "member-meda-jagadarsh",
+    name: "Meda Jagadarsh",
+    role: "App Development",
+    bio: "",
+    photo: JagadarshPhoto,
+    github: "https://github.com/jaymeda/",
+    linkedin: "https://www.linkedin.com/in/jagadarsh-meda-81aa41205",
   },
-]
+
+  {
+    id: "member-ayush-bisht",
+    name: "Ayush Bisht",
+    role: "Cyber Security",
+    bio: "",
+    photo: ayushPhoto,
+    github: "",
+    linkedin: "",
+  },
+
+  {
+    id: "member-k-sathyanarayanan",
+    name: "Sathyanarayanan",
+    role: "Game Development",
+    bio: "",
+    photo: sathyanarayananPhoto,
+    github: "",
+    linkedin: "",
+  },
+
+  {
+    id: "member-kura-sai-nishanth",
+    name: "Kura Sai Nishanth",
+    role: "AI/ML",
+    bio: "",
+    photo: kuraPhoto,
+    github: "https://github.com/kurasainishanth-ai",
+    linkedin: "https://www.linkedin.com/in/kura-sai-nishanth-45298137a",
+  },
+
+  {
+    id: "member-hrishikesh-chamarthy",
+    name: "Hrishikesh Chamarthy",
+    role: "AI Engineering",
+    bio: "",
+    photo: hrishikeshPhoto,
+    github: "https://github.com/Hrishi-2008",
+    linkedin: "https://www.linkedin.com/in/hrishikesh-chamarthy-021207380",
+  },
+
+  {
+    id: "member-siva-varaprasad",
+    name: "Siva varaprasad",
+    role: "AI Engineering",
+    bio: "",
+    photo: sivaPhoto,
+    github: "https://github.com/balledasivavaraprasad-create",
+    linkedin: "https://www.linkedin.com/in/siva-varaprasad/",
+  },
+
+  {
+    id: "member-sriharsha",
+    name: "Baswa Sriharsha",
+    role: "AI / ML",
+    bio: "",
+    photo: sriharshaPhoto,
+    github: "https://github.com/sriharshabaswa-droid",
+    linkedin: "https://www.linkedin.com/in/sriharsha-baswa-97073a370",
+  },
+
+  {
+    id: "member-gautham-sm",
+    name: "Gautham",
+    role: "AI/ML",
+    bio: "",
+    photo: gauthamPhoto,
+    github: "https://github.com/GAUTHAM-SM",
+    linkedin: "https://www.linkedin.com/in/gautham-sm-08a2a6382/",
+  },
+
+  {
+    id: "member-pindi-sri-kanaka-mahalakshmi",
+    name: "Mahalakshmi",
+    role: "AI/ML",
+    bio: "",
+    photo: madhusriPhoto,
+    github: "https://github.com/pindimadhusri11-gif",
+    linkedin:
+      "https://www.linkedin.com/in/pindi-sri-kanaka-mahalakshmi-durga-devi-953148384",
+  },
+
+  {
+    id: "member-singireddy-rushith-reddy",
+    name: "Rushith Reddy",
+    role: "App Development",
+    bio: "",
+    photo: rushithPhoto,
+    github: "",
+    linkedin: "https://www.linkedin.com/in/rushith-reddy-5ab906287",
+  },
+
+  {
+    id: "member-b-avinash",
+    name: "Avinash",
+    role: "Web Development",
+    bio: "",
+    photo: avinashPhoto,
+    github: "https://github.com/Avinash130212",
+    linkedin: "https://www.linkedin.com/in/avinash-bolisetty",
+  },
+];

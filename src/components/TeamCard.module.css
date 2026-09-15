@@ -10,39 +10,63 @@
    box-shadow: those are Card's hover channel, and a tie on specificity would
    silently kill the hover. */
 
+
 .card {
   /* An avatar over a name wants a centre axis. All three tiers share it, so
      the section stays internally consistent even though the sizes differ.
      Card's .content is a column flex container, so its children already
      stretch to full width - this only centres what is inside them. */
-  text-align: center;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  /* Align content to the bottom */
+  min-height: 380px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  overflow: hidden;
+  padding: 1.5rem;
+  background-color: #0b1329;
 }
 
 /* ---- The monogram ---- */
 
 .avatar {
   position: relative;
-  display: grid;
-  place-items: center;
-  flex: 0 0 auto;
-  /* Clips the photo to the circle. The photo also carries its own radius, so
-     this is belt and braces - a square image must never show a corner. */
+  width: calc(100% + 3rem);
+  height: 260px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-inline: -1.5rem;
+  margin-block-start: -1.5rem;
+  margin-block-end: 1.6rem;
   overflow: hidden;
-  width: var(--avatar);
-  height: var(--avatar);
-  margin-inline: auto;
-  margin-block-end: var(--s-4);
-  border-radius: 50%;
-  background: var(--g-iota);
-  box-shadow: var(--glow-violet);
-  font-family: var(--f-display);
-  font-weight: 700;
-  /* Scales with the circle, so one rule serves all three tiers. */
-  font-size: calc(var(--avatar) * 0.4);
-  letter-spacing: var(--tr-display);
-  /* Near-black on the gradient - the same contrast pairing as the active
-     selector chip. */
-  color: var(--c-black);
+}
+
+/* Full-bleed photo */
+.photo {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center top;
+  display: block;
+}
+
+/* Gradient overlay to seamlessly blend the image into the card background */
+.avatar::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at center,
+      transparent 30%,
+      rgba(11, 19, 41, 0.3) 90%,
+      rgba(11, 19, 41, 0.95) 100%),
+    linear-gradient(to bottom,
+      transparent 20%,
+      rgba(11, 19, 41, 0.8) 90%,
+      #0b1329 100%);
 }
 
 /* The photo, layered over the monogram rather than replacing it. Absolute so
@@ -51,14 +75,6 @@
 
    If it fails to load, TeamCard hides this element and the monogram
    underneath is simply revealed. */
-.photo {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  border-radius: 50%;
-}
 
 /* ---- Copy ---- */
 
@@ -81,14 +97,6 @@
   margin-block-end: var(--s-3);
 }
 
-.bio {
-  color: var(--c-text-mute);
-  font-size: 0.9375rem;
-  /* Short lines under a centred name; the section's 62ch cap is for running
-     copy, not for a one-line bio. */
-  max-width: 34ch;
-  margin-inline: auto;
-}
 
 /* ---- Socials ---- */
 
@@ -124,7 +132,7 @@
   height: 1px;
   background: var(--g-iota);
   box-shadow: var(--glow-blue);
-  transform: scaleX(0);
+  transform: fit(0);
   transform-origin: 0% 50%;
   transition: transform var(--d-base) var(--e-out);
 }
@@ -198,18 +206,17 @@
   pointer-events: none;
   opacity: 0;
   rotate: 14deg;
-  background: linear-gradient(
-    to right,
-    transparent 0%,
-    var(--c-sheen-mid) 30%,
-    var(--c-sheen) 50%,
-    var(--c-sheen-mid) 70%,
-    transparent 100%
-  );
+  background: linear-gradient(to right,
+      transparent 0%,
+      var(--c-sheen-mid) 30%,
+      var(--c-sheen) 50%,
+      var(--c-sheen-mid) 70%,
+      transparent 100%);
   will-change: transform, opacity;
 }
 
 @media (max-width: 640px) {
+
   .card.mentor,
   .card.advisor {
     padding: var(--s-8) var(--s-4);

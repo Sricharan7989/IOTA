@@ -32,7 +32,7 @@ import TeamCard from '../components/TeamCard'
 import { useTeamReveal } from '../hooks/useTeamReveal'
 import {
   ADVISOR,
-  COORDINATORS,
+  COORDINATOR,
   EXECUTIVES,
   MEMBERS,
   MENTOR,
@@ -46,7 +46,7 @@ const INTRO =
 const LABELS = {
   mentor: 'Mentor',
   advisor: 'Advisor',
-  coordinators: 'Coordinators',
+  coordinator: 'Coordinator',
   executives: 'Executives',
   members: 'Members',
 }
@@ -113,14 +113,13 @@ export default function Team() {
     <Section {...getSection('team')} blurb={INTRO}>
       <div ref={root} className={styles.tiers}>
         <SoloTier label={LABELS.mentor} person={MENTOR} tier="mentor" />
-        <SoloTier label={LABELS.advisor} person={ADVISOR} tier="advisor" />
-
-        <RowTier
-          label={LABELS.coordinators}
-          people={COORDINATORS}
-          tier="coordinator"
-          cellClass={styles.coordCell}
+       <RowTier
+          label={LABELS.advisor}
+          people={ADVISOR}
+          tier="advisor"
+          cellClass={styles.execCell}
         />
+        <SoloTier label={LABELS.coordinator} person={COORDINATOR} tier="coordinator" />
 
         <RowTier
           label={LABELS.executives}
