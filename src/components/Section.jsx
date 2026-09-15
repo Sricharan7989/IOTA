@@ -60,7 +60,10 @@ export default function Section({
         {heading ? (
           <h2 className={styles.heading} data-parallax-heading>
             <span className={styles.mask}>
-              <span className={styles.line} data-reveal-line>
+              {/* The title must always remain readable. Its outer element still
+                  gets the gentle section parallax, but it is not placed inside
+                  the scroll reveal's hidden starting state. */}
+              <span className={styles.line}>
                 {heading}
               </span>
             </span>
