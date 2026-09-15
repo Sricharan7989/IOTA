@@ -13,6 +13,7 @@ import styles from './Navbar.module.css'
 export default function Navbar() {
   const [activeId, setActiveId] = useState(SECTIONS[0].id)
   const [pastHero, setPastHero] = useState(false)
+  const [menuOpen, setMenuOpen] = useState(false)
 
   useEffect(() => {
     // gsap.context scopes every trigger created inside it so a single revert()
@@ -47,19 +48,40 @@ export default function Navbar() {
     return () => context.revert()
   }, [])
 
+  useEffect(() => {
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setMenuOpen(false)
+    }
+
+    window.addEventListener('keydown', closeOnEscape)
+    return () => window.removeEventListener('keydown', closeOnEscape)
+  }, [])
+
   const handleBrandClick = (event) => {
     event.preventDefault()
     scrollToSection(SECTIONS[0].id)
   }
 
   return (
-    <header className={`${styles.nav} ${pastHero ? styles.past : ''}`}>
+    <header className={`${styles.nav} ${pastHero ? styles.past : ''} ${menuOpen ? styles.open : ''}`}>
       <a href={`#${SECTIONS[0].id}`} onClick={handleBrandClick} className={styles.brand}>
         IOTA
         <span className={styles.dot} aria-hidden="true" />
       </a>
 
-      <nav className={styles.links} aria-label="Sections">
+      <button
+        type="button"
+        className={styles.menuButton}
+        aria-expanded={menuOpen}
+        aria-controls="site-navigation"
+        aria-label={menuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+        onClick={() => setMenuOpen((isOpen) => !isOpen)}
+      >
+        <span aria-hidden="true" />
+        <span aria-hidden="true" />
+      </button>
+
+      <nav id="site-navigation" className={styles.links} aria-label="Sections">
         {SECTIONS.map(({ id, label }) => (
           <NavLink
             key={id}
@@ -67,6 +89,7 @@ export default function Navbar() {
             label={label}
             active={activeId === id}
             onActivate={setActiveId}
+            onNavigate={() => setMenuOpen(false)}
           />
         ))}
       </nav>

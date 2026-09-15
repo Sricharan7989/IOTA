@@ -149,6 +149,34 @@
   }
 }
 
+@media (max-width: 640px) {
+  .section {
+    min-height: 100svh;
+    padding-block: calc(var(--nav-h) + var(--s-4)) var(--s-6);
+  }
+
+  .bottomRow {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    gap: var(--s-4);
+  }
+
+  .statement {
+    font-size: clamp(3.5rem, 20vw, 5.5rem);
+  }
+
+  .description {
+    max-width: 20ch;
+    font-size: clamp(0.875rem, 4vw, 1.125rem);
+    text-align: left;
+  }
+
+  .second {
+    font-size: clamp(1rem, 5vw, 1.5rem);
+  }
+}
+
 /* ---- Second statement (revealed on scroll, not by the intro) ---- */
 
 .secondWrap {
