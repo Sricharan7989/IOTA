@@ -97,14 +97,14 @@ void main() {
   // The radius term keeps particles near the vanishing point round — they
   // genuinely are barely moving on screen.
   float apparent = (uSpeed / max(dist, 0.6)) * (0.25 + 0.75 * min(radius, 1.5));
-  float k = 1.0 + uStreak * clamp(apparent, 0.0, 8.0);
+  float k = 1.0 + uStreak * clamp(apparent, 0.0, 12.0);
   vStreakK = k;
 
   // ---- Size --------------------------------------------------------------
   float ps = uSize * (0.6 + 0.8 * aRandom.y) * uPixelRatio * (12.0 / dist);
   ps = clamp(ps, 0.75 * uPixelRatio, uMaxSize * uPixelRatio);
   ps *= k; // the sprite quad has to grow to hold the streak
-  gl_PointSize = min(ps, 64.0); // fill-rate ceiling; some drivers clip past this
+  gl_PointSize = min(ps, 96.0); // fill-rate ceiling; some drivers clip past this
 
   // ---- Colour ------------------------------------------------------------
   // Picked in the shader from uniform thresholds rather than baked into a

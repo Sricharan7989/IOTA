@@ -9,7 +9,6 @@
      [data-reveal]   — inner lines, slid up out of their masks by the intro
      [data-parallax] — outer layers, parallaxed and faded by the scroll move */
 import { useRef } from 'react'
-import HeroPills from '../components/HeroPills'
 import { useMaskedReveal } from '../hooks/useMaskedReveal'
 import { useHeroTimeline } from '../hooks/useHeroTimeline'
 import styles from './Home.module.css'
@@ -58,7 +57,6 @@ export default function Home({ revealed = false }) {
           </span>
         </p>
 
-        <HeroPills />
       </div>
 
       {/* The centre belongs to the centerpiece — except for the second

@@ -118,13 +118,33 @@
   transform: scaleX(1);
 }
 
-@media (max-width: 640px) {
+@media (max-width: 700px) {
+  .nav {
+    height: auto;
+    min-height: var(--nav-h);
+    align-content: center;
+    flex-wrap: wrap;
+    gap: var(--s-1);
+    padding-block: var(--s-2);
+    padding-inline: var(--s-4);
+  }
+
+  .brand {
+    width: 100%;
+    font-size: 1rem;
+    line-height: 1.2;
+  }
+
   .links {
+    width: 100%;
+    justify-content: space-between;
     gap: 0;
   }
 
   .link {
-    padding-inline: var(--s-2);
-    font-size: 0.8125rem;
+    padding: var(--s-1);
+    font-size: clamp(0.625rem, 2.55vw, 0.75rem);
+    line-height: 1.2;
+    white-space: nowrap;
   }
 }

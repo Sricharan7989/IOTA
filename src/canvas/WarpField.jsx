@@ -24,7 +24,10 @@ export const WARP_DEFAULTS = {
   near: 0.9,
   far: 55,
   baseSpeed: 7,
-  boostSpeed: 38,
+  // The extra velocity is deliberately high: a wheel gesture should read as
+  // travelling through the field, rather than simply making the idle drift a
+  // little quicker.
+  boostSpeed: 54,
   size: 2.6,
   maxSize: 31,
   streak: 0.18,
@@ -36,7 +39,7 @@ export const WARP_DEFAULTS = {
   mixViolet: 0.3,
   // Lenis velocity that counts as "full throttle" scrolling. Lower = the warp
   // reacts to gentler scrolls.
-  scrollScale: 22,
+  scrollScale: 2.5,
   scrollInfluence: 0.95,
   // How much the scripted Home -> Roadmap move accelerates the warp on its
   // own, independently of how fast you happen to be scrolling.
@@ -209,7 +212,11 @@ export default function WarpField({
     // job — see the note on scrollDim above.
     uniforms.uBrightness.value =
       brightness * (1 - choreo.heroProgress * scrollDim)
-    uniforms.uStreak.value = isReduced ? 0 : streak
+    // Speed alone makes the points move faster, but a warp only reads as a
+    // jump through space once the near stars visibly lengthen. Keep the idle
+    // field mostly round and lengthen it in lockstep with the smoothed boost,
+    // so the effect also has a clean, unhurried release after scrolling.
+    uniforms.uStreak.value = isReduced ? 0 : streak * (1 + boost.current * 7)
     uniforms.uSoftness.value = softness
     uniforms.uRepelRadius.value = repelRadius
     uniforms.uRepelStrength.value = repelStrength

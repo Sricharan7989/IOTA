@@ -266,3 +266,11 @@
      ever paint over it. */
   --z-cursor: 200;
 }
+
+/* The compact navbar uses two rows: keep this shared measurement in sync so
+   hero content still starts below it rather than underneath its links. */
+@media (max-width: 700px) {
+  :root {
+    --nav-h: 6.5rem;
+  }
+}

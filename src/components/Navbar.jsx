@@ -21,13 +21,18 @@ export default function Navbar() {
       SECTIONS.forEach(({ id }) => {
         ScrollTrigger.create({
           trigger: `#${id}`,
-          // A section counts as active once it crosses the middle of the
-          // viewport, which is where the eye actually is.
-          start: 'top 50%',
-          end: 'bottom 50%',
-          onToggle: (self) => {
-            if (self.isActive) setActiveId(id)
-          },
+          // A section is active through the central viewing area. Starting
+          // before the midpoint is important for the final sections: at the
+          // bottom of the document they can be visible without ever reaching
+          // a 50% top offset.
+          start: 'top 80%',
+          end: 'bottom 20%',
+          // Use directional enter callbacks rather than onToggle. `onToggle`
+          // can miss a very short active interval when Lenis eases through a
+          // section; explicit callbacks keep every manifest section,
+          // including Projects, in sync in both scroll directions.
+          onEnter: () => setActiveId(id),
+          onEnterBack: () => setActiveId(id),
         })
       })
 
@@ -56,7 +61,13 @@ export default function Navbar() {
 
       <nav className={styles.links} aria-label="Sections">
         {SECTIONS.map(({ id, label }) => (
-          <NavLink key={id} id={id} label={label} active={activeId === id} />
+          <NavLink
+            key={id}
+            id={id}
+            label={label}
+            active={activeId === id}
+            onActivate={setActiveId}
+          />
         ))}
       </nav>
     </header>
