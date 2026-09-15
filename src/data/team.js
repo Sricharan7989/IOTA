@@ -53,7 +53,7 @@
 import mentorPhoto from "../assets/team/mentor.jpg";
 import bhanuPhoto from "../assets/team/bhanu.jpeg";
 import pheelipPhoto from "../assets/team/pheelip.jpeg";
-import coordinatorPhoto from "../assets/team/siddharth.png";
+import coordinatorPhoto from "../assets/team/coordinator.jpeg";
 
 import jyothikiranPhoto from "../assets/team/jyothikiran.jpeg";
 import sujaiPhoto from "../assets/team/sujai.jpeg";

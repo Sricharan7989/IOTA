@@ -1,0 +1,311 @@
+/* IOTA - Projects section. Uses the shared Card surface and its pointer sheen
+   so project entries feel native to the rest of the content world. */
+.grid {
+  position: relative;
+  /* Expanded cards may extend past the section's normal bottom edge. Keep
+     them above the following section's blue-violet divider while they do. */
+  z-index: 1;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--s-6);
+  /* Project cards form one deliberate catalogue row, so they share a common
+     height even when an entry's summary is shorter. */
+  align-items: stretch;
+}
+
+.cell {
+  position: relative;
+  display: flex;
+  align-items: stretch;
+  min-height: 21rem;
+  will-change: transform;
+}
+
+.card {
+  height: 100%;
+  min-height: 0;
+  padding: 0;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.45;
+  background:
+    linear-gradient(var(--c-hairline) 1px, transparent 1px),
+    linear-gradient(90deg, var(--c-hairline) 1px, transparent 1px);
+  background-size: 2.25rem 2.25rem;
+  mask-image: linear-gradient(to bottom, black, transparent 46%);
+}
+
+.card:hover::before,
+.card:focus-within::before {
+  opacity: 0.7;
+}
+
+.cardTop {
+  position: relative;
+  padding: var(--s-6) var(--s-6) var(--s-8);
+  padding-bottom: var(--s-6);
+  border-bottom: 1px solid var(--content-divider);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--s-4);
+  margin-bottom: var(--s-8);
+}
+
+.projectNumber,
+.status {
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+}
+
+.projectNumber {
+  color: var(--c-text-faint);
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--s-2);
+  color: var(--c-blue);
+}
+
+.status span {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: 50%;
+  background: var(--c-blue);
+  box-shadow: var(--glow-blue);
+}
+
+.name {
+  font-size: var(--t-h2);
+  color: var(--c-text);
+}
+
+.description {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  margin: var(--s-6);
+  margin-bottom: var(--s-8);
+  color: var(--c-text-mute);
+}
+
+/* The shared height leaves different amounts of air under each summary. This
+   faint runway turns that air into intentional interface structure instead of
+   a blank gap, while keeping every project card equally sized. */
+.description::after {
+  content: '';
+  display: block;
+  width: 100%;
+  height: 1px;
+  margin-top: auto;
+  padding-top: var(--s-6);
+  border-bottom: 1px solid var(--content-divider);
+  background: linear-gradient(to right, var(--c-blue), transparent 72%);
+  background-clip: content-box;
+  opacity: 0.7;
+}
+
+.stackGroup {
+  margin: 0 var(--s-6) var(--s-8);
+}
+
+/* The compact cards stay the same size. An expanded card is removed from the
+   grid flow, so its extra details never make its neighbours taller. */
+.details {
+  max-height: 0;
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(var(--s-2));
+  transition:
+    max-height var(--d-base) var(--e-out),
+    opacity var(--d-fast) var(--e-out),
+    transform var(--d-base) var(--e-out);
+}
+
+.card:hover,
+.card:focus,
+.card:focus-within {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 2;
+  height: auto;
+  min-height: 21rem;
+}
+
+.card:hover .details,
+.card:focus .details,
+.card:focus-within .details {
+  max-height: 14rem;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.stackLabel {
+  margin-bottom: var(--s-3);
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  letter-spacing: var(--tr-label);
+  text-transform: uppercase;
+  color: var(--c-text-faint);
+}
+
+.stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-2);
+  margin-bottom: var(--s-8);
+}
+
+.stack li {
+  padding: var(--s-1) var(--s-2);
+  border: 1px solid var(--c-hairline);
+  border-radius: 999px;
+  font-family: var(--f-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.04em;
+  color: var(--c-text-faint);
+}
+
+.links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--s-4);
+  padding: var(--s-4) var(--s-6) var(--s-6);
+  border-top: 1px solid var(--content-divider);
+  /* Every action bar lands on the same baseline across the row. */
+  margin-top: auto;
+}
+
+.links a {
+  font-family: var(--f-mono);
+  font-size: var(--t-label);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--c-text-mute);
+  transition: color var(--d-fast) var(--e-out);
+}
+
+.links a:hover,
+.links a:focus-visible {
+  color: var(--c-blue);
+}
+
+.links span {
+  display: inline-block;
+  margin-inline-start: var(--s-1);
+  transition: transform var(--d-fast) var(--e-out);
+}
+
+.links a:hover span,
+.links a:focus-visible span {
+  transform: translate(2px, -2px);
+}
+
+.cornerMark {
+  position: absolute;
+  inset: var(--s-4) var(--s-4) auto auto;
+  width: var(--s-4);
+  height: var(--s-4);
+  border-top: 1px solid var(--c-violet);
+  border-right: 1px solid var(--c-violet);
+  opacity: 0.75;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .cardTop {
+    padding: var(--s-4) var(--s-4) var(--s-6);
+  }
+
+  .description {
+    margin: var(--s-4);
+    margin-bottom: var(--s-6);
+  }
+
+  .stackGroup {
+    margin: 0 var(--s-4) var(--s-6);
+  }
+
+  .links {
+    padding: var(--s-4);
+  }
+
+  .cell,
+  .card:hover,
+  .card:focus,
+  .card:focus-within {
+    min-height: 19rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--s-4);
+  }
+
+  .cell {
+    min-height: 0;
+  }
+
+  /* Touch screens do not have a persistent hover state, so expanded content
+     remains available in the normal document flow. */
+  .card,
+  .card:hover,
+  .card:focus,
+  .card:focus-within {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  .details {
+    max-height: none;
+    overflow: visible;
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Tablets can be wider than the phone breakpoint but still use a coarse,
+   touch-only pointer. An absolute hover overlay has no reliable interaction
+   there and can cover neighbouring cards, so keep the full content in normal
+   flow on every touch device. */
+@media (hover: none), (pointer: coarse) {
+  .cell {
+    min-height: 0;
+  }
+
+  .card,
+  .card:hover,
+  .card:focus,
+  .card:focus-within {
+    position: relative;
+    inset: auto;
+    height: auto;
+    min-height: 0;
+  }
+
+  .details {
+    max-height: none;
+    overflow: visible;
+    opacity: 1;
+    transform: none;
+  }
+}

@@ -20,6 +20,7 @@ import Home from './sections/Home'
 import Events from './sections/Events'
 import Roadmap from './sections/Roadmap'
 import Academics from './sections/Academics'
+import Projects from './sections/Projects'
 import Team from './sections/Team'
 import { useSmoothScroll } from './hooks/useSmoothScroll'
 import { getQuality } from './lib/quality'
@@ -75,6 +76,7 @@ export default function App() {
         <Events />
         <Roadmap />
         <Academics />
+        <Projects />
         <Team />
       </main>
 

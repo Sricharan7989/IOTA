@@ -8,7 +8,8 @@ export const SECTIONS = [
   { id: 'events', index: '02', label: 'Events', heading: 'Events' },
   { id: 'roadmap', index: '03', label: 'Roadmap', heading: 'Roadmap' },
   { id: 'academics', index: '04', label: 'Academics', heading: 'Academics' },
-  { id: 'team', index: '05', label: 'Team', heading: 'Team' },
+  { id: 'projects', index: '05', label: 'Projects', heading: 'Projects' },
+  { id: 'team', index: '06', label: 'Team', heading: 'Team' },
 ]
 
 export function getSection(id) {

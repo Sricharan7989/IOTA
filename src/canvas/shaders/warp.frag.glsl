@@ -23,7 +23,8 @@ void main() {
   // along the direction of travel — a streak, not a fat blob.
   vec2 along = vStreakDir;
   vec2 across = vec2(-along.y, along.x);
-  vec2 local = vec2(dot(uv, along), dot(uv, across) * vStreakK);
+  float alongPosition = dot(uv, along);
+  vec2 local = vec2(alongPosition, dot(uv, across) * vStreakK);
 
   float r = length(local) * 2.0; // 0 at centre, 1 at the sprite edge
   if (r > 1.0) discard; // round, never a square
@@ -32,7 +33,14 @@ void main() {
   float halo = pow(falloff, uSoftness);
   float core = pow(falloff, 12.0); // tight hot centre — this is the "shiny"
 
-  float intensity = (halo * 0.75 + core * 0.9) * vAlpha;
+  // A warp trail should have a leading spark and a tail back towards the
+  // vanishing point. At rest this evaluates to one, preserving a round star;
+  // under boost it dims the inward half into a genuine directional trail.
+  float warp = clamp((vStreakK - 1.0) / 8.0, 0.0, 1.0);
+  float direction = alongPosition * 2.0; // -1: centre-facing tail, +1: front
+  float tailFade = mix(1.0, 0.22 + 0.78 * smoothstep(-1.0, 0.72, direction), warp);
+
+  float intensity = (halo * 0.75 + core * 0.9) * tailFade * vAlpha;
 
   // Additive blending is SrcAlpha * src + dst, so intensity rides in alpha and
   // the colour stays unmultiplied.

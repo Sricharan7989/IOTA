@@ -13,16 +13,65 @@ export const RESOURCE_TYPES = ["PYQs", "Reference"];
  * Create the resource list for a course.
  * Each PYQ URL should point directly to that course's Drive folder.
  */
-const resources = (pyqUrl) => [
+const YOUTUBE_PLAYLIST_QUERIES = {
+  'Computer Programming': 'C programming full course playlist Neso Academy',
+  'Discrete Structures and Matrix Algebra': 'discrete mathematics linear algebra full course playlist',
+  'Overview of Computers Workshop': 'computer fundamentals full course playlist',
+  'Digital Logic Design': 'digital logic design full course playlist Neso Academy',
+  'Essential English': 'English communication skills full course playlist',
+  'Ethics in Daily Life': 'ethics in daily life full course playlist',
+  'Foundations in Human Values and Ethics': 'universal human values ethics full course playlist',
+  'Probability and Statistics': 'probability and statistics full course playlist',
+  'Data Structures and Algorithms': 'data structures and algorithms full course playlist Abdul Bari',
+  'Signals and Systems': 'signals and systems full course playlist Neso Academy',
+  'Computer Architecture': 'computer architecture full course playlist Neso Academy',
+  'Operational Communication': 'professional communication skills full course playlist',
+  'Basic Electronics Circuits': 'basic electronics circuits full course playlist',
+  'Real Analysis, Numerical Analysis and Calculus': 'real analysis numerical analysis calculus full course playlist',
+  'Object Oriented Programming': 'object oriented programming Java full course playlist',
+  'Advanced Data Structures and Algorithms': 'advanced data structures algorithms full course playlist',
+  'Operating Systems': 'operating systems full course playlist Neso Academy',
+  'Database Management Systems': 'database management systems full course playlist Neso Academy',
+  'Machine Learning': 'machine learning full course playlist Andrew Ng',
+  'Professional Communication': 'professional communication skills full course playlist',
+  'Computer and Communication Networks': 'computer networks full course playlist Neso Academy',
+  'Fundamentals of Full Stack Development': 'full stack web development full course playlist',
+  'Theory of Computation': 'theory of computation full course playlist Neso Academy',
+  'Electromagnetics and Transmission Lines': 'electromagnetics transmission lines full course playlist',
+  'Artificial Intelligence': 'artificial intelligence full course playlist Neso Academy',
+  'Quantum Information & Computing': 'quantum computing full course playlist',
+  'Fundamentals of Communication': 'communication systems full course playlist Neso Academy',
+}
+
+/* Verified direct course resources for the major technical papers. The other
+   papers intentionally fall back to their specific playlist search below. */
+const YOUTUBE_REFERENCES = {
+  'Computer Programming': 'https://www.youtube.com/playlist?list=PLBlnK6fEyqRhX6r2uhhlubuF5QextdCSM',
+  'Digital Logic Design': 'https://www.youtube.com/playlist?list=PLBlnK6fEyqRjMH3mWf6kwqiTbT798eAOm',
+  'Data Structures and Algorithms': 'https://www.youtube.com/watch?v=xLetJpcjHS0',
+  'Signals and Systems': 'https://www.youtube.com/watch?v=s8rsR_TStaA',
+  'Operating Systems': 'https://www.youtube.com/playlist?list=PLBlnK6fEyqRiVhbXDGLXDk_OQAeuVcp2O',
+  'Database Management Systems': 'https://www.youtube.com/watch?v=OMwgGL3lHlI',
+  'Computer and Communication Networks': 'https://www.youtube.com/watch?v=0pMm_QxCg3I',
+  'Theory of Computation': 'https://www.youtube.com/watch?v=58N2N7zJGrQ',
+}
+
+const youtubeReference = (courseName) =>
+  YOUTUBE_REFERENCES[courseName] ??
+  `https://www.youtube.com/results?search_query=${encodeURIComponent(
+    YOUTUBE_PLAYLIST_QUERIES[courseName] ?? `${courseName} full course playlist`,
+  )}`
+
+const resources = (courseName, pyqUrl) => [
   { type: "PYQs", url: pyqUrl },
-  { type: "Reference", url: "#" },
+  { type: "Reference", url: youtubeReference(courseName) },
 ];
 
 /** Create a course entry. */
 const course = (name, credits, pyqUrl) => ({
   name,
   credits,
-  resources: resources(pyqUrl),
+  resources: resources(name, pyqUrl),
 });
 
 export const SEMESTERS = [
