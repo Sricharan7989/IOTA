@@ -2,7 +2,7 @@
    Single source of truth for the Events section.
 
    Schema, per event:
-     { id, title, date, location, status, blurb, image }
+     { id, title, date, location, status, blurb, image, images }
 
    `status` is 'upcoming' | 'past' and is the ONLY thing that decides which
    block an event lands in - the section filters on it rather than keeping two
@@ -13,55 +13,43 @@
    real date object would only invite timezone bugs into a list a human reads.
    Write it however it should appear.
 
-   `image` is a path under public/, exactly like team photos - `/events/x.jpg`
+   `image` is a single path under public/, exactly like team photos - `/events/x.jpg`
    with the leading slash. Set it to null and the card renders a blue-violet
    gradient with the event's initial instead, which is a designed state rather
    than a hole.
 
-   ============================== PLACEHOLDER ==============================
-   Every event below is a PLACEHOLDER. Upcoming is deliberately EMPTY so the
-   empty state is visible in development - add a real event with
-   status: 'upcoming' and it disappears on its own.
-   ========================================================================= */
+   `images` is an optional array of paths under public/. When present it takes
+   priority over `image` and the card renders a cycling photo gallery. Leave it
+   undefined or empty to fall back to the single `image` / gradient behaviour. */
 
 export const EVENTS = [
-  /* PLACEHOLDER - nothing upcoming yet. Add entries with
-     status: 'upcoming' here and the empty state stands down. */
-
-  /* PLACEHOLDER */
   {
-    id: 'intro-to-ml',
-    title: 'Intro to Machine Learning',
-    date: '12 February 2026',
-    location: 'Seminar Hall 2, IIIT Sri City',
+    id: 'inter-iiit-esports-qualifiers-2026',
+    title: 'Inter IIIT Esports Qualifiers',
+    date: '29 August 2026',
+    location: 'IIIT Sri City',
     status: 'past',
     blurb:
-      'Two hours, one laptop, a working classifier by the end. No slides about what a neural network is - you train one on a real dataset and find out why it is wrong.',
-    image: null,
+      'We conducted qualifiers for the Inter IIIT Esports Tournament, featuring games like BGMI, Valorant, and Free Fire. Players competed on campus to secure their spot in the main tournament.',
+    image: '/events/DSC_1537.JPG',
+    images: [
+      '/events/DSC_1537.JPG',
+      '/events/DSC_1708.JPG',
+      '/events/DSC_1772.JPG',
+      '/events/DSC_1814.JPG',
+      '/events/DSC_1874.JPG',
+      '/events/DSC_1879.JPG',
+    ],
   },
 
-  /* PLACEHOLDER */
   {
-    id: 'ship-a-site',
-    title: 'Ship a Site in an Evening',
-    date: '28 January 2026',
-    location: 'Lab 4, Academic Block',
+    id: 'brumble-matiks',
+    title: 'Brumble Matiks',
+    location: 'IIIT Sri City',
     status: 'past',
     blurb:
-      'From an empty folder to a live URL before anyone went home. HTML, a little CSS, and a deploy that everyone in the room could open on their phone.',
-    image: null,
-  },
-
-  /* PLACEHOLDER */
-  {
-    id: 'open-source-night',
-    title: 'Open Source Night',
-    date: '9 December 2025',
-    location: 'Student Activity Centre',
-    status: 'past',
-    blurb:
-      'Everyone brought one repository they had been meaning to contribute to. Eleven pull requests opened, four merged before the night was out.',
-    image: null,
+      'A national inter-collegiate mind-sports league where college teams go head-to-head in competitive brain-training and strategy games.',
+    image: '/events/brumble-matiks.jpeg',
   },
 ]
 

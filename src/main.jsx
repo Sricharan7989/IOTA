@@ -13,10 +13,14 @@ if ('scrollRestoration' in window.history) {
 }
 
 const resetInitialScroll = () => {
-  // Always scroll to the top on reload unless navigating directly via URL hash
-  if (!window.location.hash) {
-    window.scrollTo(0, 0)
-  }
+  // Always start at the top (Home section) on every page load/reload.
+  window.scrollTo(0, 0)
+}
+
+// Strip any URL hash so the browser doesn't jump to a mid-page anchor
+// before React mounts and the preloader takes over.
+if (window.location.hash) {
+  history.replaceState(null, '', window.location.pathname + window.location.search)
 }
 
 // Run reset on initialization
