@@ -64,7 +64,17 @@ const TYPE_GROUPS = {
   Tool: 'do',
   Practice: 'do',
   YouTube: 'video',
+  Video: 'video',
   Paper: 'paper',
+  CTF: 'do',
+  Wargame: 'do',
+  Lab: 'do',
+  'Bug Bounty': 'do',
+  RE: 'do',
+  Web: 'ref',
+  Cert: 'ref',
+  Prep: 'ref',
+  Framework: 'read',
 }
 
 const typeGroup = (type) => TYPE_GROUPS[type] ?? 'ref'
