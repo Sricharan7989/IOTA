@@ -20,7 +20,7 @@ export function useMaskedReveal(scopeRef, revealed, { stagger = 0.09 } = {}) {
     if (prefersReducedMotion()) {
       gsap.set(lines, { opacity: 0 })
     } else {
-      gsap.set(lines, { yPercent: 110 })
+      gsap.set(lines, { yPercent: 110, opacity: 1 })
     }
   }, [scopeRef])
 
@@ -35,6 +35,7 @@ export function useMaskedReveal(scopeRef, revealed, { stagger = 0.09 } = {}) {
       ? gsap.to(lines, { opacity: 1, duration: 0.5, ease: 'none', stagger: 0.05 })
       : gsap.to(lines, {
           yPercent: 0,
+          opacity: 1,
           duration: 1.2,
           ease: 'expo.out',
           stagger,

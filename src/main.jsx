@@ -7,6 +7,18 @@ import App from './App'
 import './styles/tokens.css'
 import './styles/global.css'
 
+const resetInitialScroll = () => {
+  if (!window.location.hash) {
+    window.scrollTo(0, 0)
+    document.documentElement.scrollTop = 0
+    document.body.scrollTop = 0
+  }
+}
+
+resetInitialScroll()
+requestAnimationFrame(resetInitialScroll)
+window.addEventListener('pageshow', resetInitialScroll, { once: true })
+
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <App />
