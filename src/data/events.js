@@ -23,6 +23,20 @@
    undefined or empty to fall back to the single `image` / gradient behaviour. */
 
 export const EVENTS = [
+  /* ── UPCOMING ─────────────────────────────────────────────────────────── */
+  {
+    id: 'bit-n-build-2026',
+    title: 'BIT N BUILD',
+    date: '26 September 2026',
+    location: 'IIIT Sri City',
+    status: 'upcoming',
+    blurb:
+      'An international hackathon — the first round is conducted by us. Bring your ideas, build fast, and compete on the global stage.',
+    image: '/events/bit-n-build.png',
+  },
+
+  /* ── PAST ──────────────────────────────────────────────────────────────── */
+
   {
     id: 'inter-iiit-esports-qualifiers-2026',
     title: 'Inter IIIT Esports Qualifiers',
