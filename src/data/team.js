@@ -78,6 +78,7 @@ import sivaPhoto from "../assets/team/Siva_varaprasad.png";
 import sriharshaPhoto from "../assets/team/sriharsha.jpeg";
 import tholkappianPhoto from "../assets/team/tholkappian.jpeg";
 import gauthamPhoto from "../assets/team/gautham.png";
+import hemanthPhoto from "../assets/team/hemanth.png";
 
 /* PLACEHOLDER - tier 1. */
 export const MENTOR = {
@@ -163,6 +164,26 @@ export const MEMBERS = [
   // ============================================================
 
   {
+    id: "lead-tholkappian",
+    name: "Tholkappian",
+    role: "Web Development-LEAD",
+    bio: "",
+    photo: tholkappianPhoto,
+    github: "https://github.com/TitanThols",
+    linkedin: "https://www.linkedin.com/in/tholkappian-murugesan-bb401a326/",
+  },
+
+  {
+    id: "member-hemanth",
+    name: "Hemanth",
+    role: "Cyber Security - Lead",
+    bio: "",
+    photo: hemanthPhoto,
+    github: "https://github.com/Hemanth-G48",
+    linkedin: "https://www.linkedin.com/in/hemanth-gundu-08aa46371/",
+  },
+
+  {
     id: "member-sriharsha",
     name: "Baswa Sriharsha",
     role: "AI / ML",
@@ -210,11 +231,21 @@ export const MEMBERS = [
   {
     id: "member-hrishikesh-chamarthy",
     name: "Hrishikesh Chamarthy",
-    role: "AI Engineering",
+    role: "Data Science",
     bio: "",
     photo: hrishikeshPhoto,
     github: "https://github.com/Hrishi-2008",
     linkedin: "https://www.linkedin.com/in/hrishikesh-chamarthy-021207380",
+  },
+
+  {
+    id: "member-medha-kethari",
+    name: "Medha Kethari",
+    role: "Data Science",
+    bio: "",
+    photo: KmedhaPhoto,
+    github: "https://github.com/medha7814",
+    linkedin: "",
   },
 
   {
@@ -240,16 +271,6 @@ export const MEMBERS = [
   // ============================================================
   // WEB DEVELOPMENT
   // ============================================================
-
-  {
-    id: "lead-tholkappian",
-    name: "Tholkappian",
-    role: "Web Development-LEAD",
-    bio: "",
-    photo: tholkappianPhoto,
-    github: "https://github.com/TitanThols",
-    linkedin: "https://www.linkedin.com/in/tholkappian-murugesan-bb401a326/",
-  },
 
   {
     id: "member-krish-gupta",
@@ -302,7 +323,7 @@ export const MEMBERS = [
     bio: "",
     photo: sathyanarayananPhoto,
     github: "",
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/k-sathyanarayanan-847901388/",
   },
 
   // ============================================================
@@ -334,16 +355,6 @@ export const MEMBERS = [
   // ============================================================
 
   {
-    id: "member-medha-kethari",
-    name: "Medha Kethari",
-    role: "Data Science",
-    bio: "",
-    photo: KmedhaPhoto,
-    github: "https://github.com/medha7814",
-    linkedin: "",
-  },
-
-  {
     id: "member-jahnavi-yerra",
     name: "Jahnavi Yerra",
     role: "Data Science",
@@ -364,6 +375,6 @@ export const MEMBERS = [
     bio: "",
     photo: ayushPhoto,
     github: "",
-    linkedin: "",
+    linkedin: "https://www.linkedin.com/in/ayush-bisht-704b9137b",
   },
 ];
