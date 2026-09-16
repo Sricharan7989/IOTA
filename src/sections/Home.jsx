@@ -30,12 +30,6 @@ const COPY = {
   descriptionLead: 'Tech Club',
   descriptionMid: 'in IIIT Sri City',
   descriptionTail: '',
-
-  // The second statement, revealed by the scrubbed scroll timeline rather than
-  // by the intro. Two short lines works best — it has to land and clear before
-  // the next section arrives.
-  secondLead: 'Forty-odd builders,',
-  secondTail: 'one shared obsession.',
 }
 /* ===================== END PLACEHOLDER COPY ============================ */
 
@@ -57,23 +51,6 @@ export default function Home({ revealed = false }) {
           </span>
         </p>
 
-      </div>
-
-      {/* The centre belongs to the centerpiece — except for the second
-          statement, which slides through it on the scroll timeline. */}
-      <div className={styles.secondWrap}>
-        <p className={styles.second}>
-          <span className={styles.mask}>
-            <span className={styles.line} data-scroll-reveal>
-              {COPY.secondLead}
-            </span>
-          </span>
-          <span className={styles.mask}>
-            <span className={styles.line} data-scroll-reveal>
-              {COPY.secondTail}
-            </span>
-          </span>
-        </p>
       </div>
 
       {/* ---- Bottom corners ---- */}

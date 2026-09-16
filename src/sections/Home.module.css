@@ -72,7 +72,7 @@
   font-size: var(--t-label);
   letter-spacing: var(--tr-label);
   text-transform: uppercase;
-  color: var(--c-text-mute);
+  color: var(--c-text);
   text-shadow: var(--shadow-text);
 }
 
@@ -99,7 +99,7 @@
   font-size: clamp(1rem, 2.6vw, 2rem);
   font-weight: 600;
   letter-spacing: 0.02em;
-  color: var(--c-text-mute);
+  color: var(--c-text);
   margin-bottom: var(--s-2);
 }
 

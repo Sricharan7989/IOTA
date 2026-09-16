@@ -13,23 +13,23 @@ export const PROJECTS = [
     live: 'https://devtrackpro.vercel.app/',
   },
   {
-    id: 'campus-pulse',
-    name: 'Campus Pulse',
+    id: 'hangout',
+    name: 'Hangout',
     status: 'Live',
     description:
-      'A lightweight campus bulletin that makes clubs, events, and opportunities easier to discover.',
+      'Social streaming web app that lets friends watch movies, shows, and series together in real time while staying connected through built-in video chat.',
     stack: ['Next.js', 'Supabase', 'Tailwind'],
     github: 'https://github.com/',
-    live: 'https://example.com/',
+    live: 'https://hangout-pheelips-projects.vercel.app/',
   },
   {
-    id: 'signal',
-    name: 'Signal',
-    status: 'Research',
+    id: 'Ur-quest',
+    name: 'UrQuest',
+    status: 'Live',
     description:
-      'An open visual toolkit for exploring patterns in student feedback and community activity.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim.',
     stack: ['Python', 'Pandas', 'D3.js'],
-    github: 'https://github.com/',
+    github: 'https://ur-quest.vercel.app/',
     live: null,
   },
 ]
