@@ -52,9 +52,9 @@ const isExternal = (url) => /^https?:\/\//i.test(url)
    one field in data/team.js. */
 function socialsOf(person) {
   return [
-    { label: 'GitHub', url: person.github },
-    { label: 'LinkedIn', url: person.linkedin },
-  ].filter((social) => social.url)
+    { label: 'GitHub', url: person.github?.trim() },
+    { label: 'LinkedIn', url: person.linkedin?.trim() },
+  ].filter((social) => isExternal(social.url))
 }
 
 export default function TeamCard({ person, tier = 'member', showRole = true }) {

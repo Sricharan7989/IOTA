@@ -7,7 +7,7 @@
    the section renders.
 
      MENTOR        one person, largest card
-     ADVISOR       one person, largest card
+     ADVISOR       two persons, medium card
      COORDINATORS  a centred row, large-medium
      EXECUTIVES    a centred row, medium
      MEMBERS       a responsive grid, standard
@@ -92,7 +92,7 @@ export const MENTOR = {
 /* PLACEHOLDER - tier 2. */
 export const ADVISOR = [
   {
-    id: "advisor",
+    id: "advisor-pheelip-raipure",
     name: "Pheelip Raipure",
     role: "Club Advisor",
     photo: pheelipPhoto,
@@ -100,7 +100,7 @@ export const ADVISOR = [
     linkedin: "",
   },
   {
-    id: "advisor",
+    id: "advisor-bhanu-panuganti",
     name: "Bhanu Panuganti",
     role: "Club Advisor",
     photo: bhanuPhoto,
@@ -135,8 +135,8 @@ export const EXECUTIVES = [
     name: "Sujai",
     role: "App Development",
     photo: sujaiPhoto,
-    github: " https://github.com/Sujaicodes",
-    linkedin: " https://www.linkedin.com/in/sujai-shukla-74a3413b6/",
+    github: "https://github.com/Sujaicodes",
+    linkedin: "https://www.linkedin.com/in/sujai-shukla-74a3413b6/",
   },
   {
     id: "exec-projects",
@@ -152,7 +152,7 @@ export const EXECUTIVES = [
     role: "AI Engineer",
     photo: sricharanPhoto,
     github: "https://github.com/Sricharan7989",
-    linkedin: "www.linkedin.com/in/sricharan-k-777sk",
+    linkedin: "https://www.linkedin.com/in/sricharan-k-777sk",
   },
 ];
 
@@ -312,7 +312,7 @@ export const MEMBERS = [
     role: "Game Development",
     bio: "",
     photo: karthikPhoto,
-    github: "Sirnnn",
+    github: "",
     linkedin: "",
   },
 

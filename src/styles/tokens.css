@@ -267,10 +267,9 @@
   --z-cursor: 200;
 }
 
-/* The compact navbar uses two rows: keep this shared measurement in sync so
-   hero content still starts below it rather than underneath its links. */
+/* The compact navbar keeps one row and opens its section list as a panel. */
 @media (max-width: 700px) {
   :root {
-    --nav-h: 6.5rem;
+    --nav-h: 4.5rem;
   }
 }

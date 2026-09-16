@@ -164,3 +164,24 @@
   color: var(--c-text-mute);
   margin-bottom: var(--s-12);
 }
+
+@media (max-width: 640px) {
+  .section {
+    min-height: auto;
+    padding-block: var(--s-16);
+  }
+
+  .index {
+    margin-bottom: var(--s-4);
+    font-size: 0.6875rem;
+  }
+
+  .heading {
+    font-size: clamp(2.5rem, 14vw, 4rem);
+    margin-bottom: var(--s-4);
+  }
+
+  .blurb {
+    margin-bottom: var(--s-8);
+  }
+}

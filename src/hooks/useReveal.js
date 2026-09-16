@@ -49,7 +49,16 @@ export function useReveal(
           duration: 1.1,
           ease: 'expo.out',
           stagger: 0.08,
-          scrollTrigger: { trigger: scope, start },
+          scrollTrigger: {
+            trigger: scope,
+            start,
+            // A browser can restore a page beyond this trigger before GSAP
+            // measures it. In that case the finished title is the correct
+            // state; never leave it parked below its clipping mask.
+            onRefresh: (self) => {
+              if (self.progress > 0) gsap.set(lines, { yPercent: 0 })
+            },
+          },
         })
       }
 
@@ -61,7 +70,13 @@ export function useReveal(
           duration: 0.9,
           ease: 'expo.out',
           stagger,
-          scrollTrigger: { trigger: scope, start },
+          scrollTrigger: {
+            trigger: scope,
+            start,
+            onRefresh: (self) => {
+              if (self.progress > 0) gsap.set(items, { y: 0, opacity: 1 })
+            },
+          },
         })
       }
     }, scope)
