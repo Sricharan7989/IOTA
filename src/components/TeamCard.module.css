@@ -132,7 +132,7 @@
   height: 1px;
   background: var(--g-iota);
   box-shadow: var(--glow-blue);
-  transform: fit(0);
+  transform: scaleX(0);
   transform-origin: 0% 50%;
   transition: transform var(--d-base) var(--e-out);
 }

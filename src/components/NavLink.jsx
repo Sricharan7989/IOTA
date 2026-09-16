@@ -5,7 +5,7 @@ import { useMagnetic } from '../hooks/useMagnetic'
 import { scrollToSection } from '../lib/scroll'
 import styles from './Navbar.module.css'
 
-export default function NavLink({ id, label, active, onActivate }) {
+export default function NavLink({ id, label, active, onActivate, onNavigate }) {
   const ref = useMagnetic()
 
   const handleClick = (event) => {
@@ -15,6 +15,7 @@ export default function NavLink({ id, label, active, onActivate }) {
     // The navbar should acknowledge the chosen destination immediately.
     // ScrollTrigger then owns the state again while the page is moving.
     onActivate?.(id)
+    onNavigate?.()
     scrollToSection(id)
   }
 

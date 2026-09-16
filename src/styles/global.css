@@ -84,6 +84,13 @@ ol {
 
 #root {
   isolation: isolate;
+  overflow: clip;
+}
+
+/* Flex and grid children otherwise retain their intrinsic minimum width,
+   which is a common source of horizontal scrolling on narrow phones. */
+#root :is(section, div, article, nav, header, main) {
+  min-width: 0;
 }
 
 /* Set by <Cursor> on mount, and only when it has actually decided to render:
