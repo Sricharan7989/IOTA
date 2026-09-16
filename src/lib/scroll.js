@@ -156,3 +156,32 @@ export function scrollToSection(id) {
     target.scrollIntoView({ behavior: 'auto', block: 'start' })
   }
 }
+
+/** Smooth-scroll to a specific vertical position. */
+export function scrollToPosition(targetY, { duration = 1.2 } = {}) {
+  const target = Math.max(0, targetY)
+  if (lenis && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    lenis.scrollTo(target, { duration, easing: easeOutExpo })
+  } else {
+    window.scrollTo({
+      top: target,
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    })
+  }
+}
+
+/** Smooth-scroll so a DOM element lands at `offset` px from the top. */
+export function scrollToElement(el, { offset = 0, duration = 1.2 } = {}) {
+  if (!el) return
+  if (lenis && !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    lenis.scrollTo(el, { offset, duration, easing: easeOutExpo })
+  } else {
+    const top = el.getBoundingClientRect().top + window.scrollY + offset
+    window.scrollTo({
+      top: Math.max(0, top),
+      behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth',
+    })
+  }
+}
+
+
