@@ -25,48 +25,49 @@
 export const EVENTS = [
   /* ── UPCOMING ─────────────────────────────────────────────────────────── */
   {
-    id: 'bit-n-build-2026',
-    title: 'BIT N BUILD',
-    date: '26 September 2026',
-    location: 'IIIT Sri City',
-    status: 'upcoming',
+    id: "bit-n-build-2026",
+    title: "BIT N BUILD",
+    date: "26 September 2026",
+    location: "IIIT Sri City",
+    status: "upcoming",
     blurb:
-      'An international hackathon — the first round is conducted by us. Bring your ideas, build fast, and compete on the global stage.',
-    image: '/events/bit-n-build.png',
+      "An international hackathon — the first round is conducted by us. Bring your ideas, build fast, and compete on the global stage.",
+    image: "/events/bit-n-build.png",
   },
 
   /* ── PAST ──────────────────────────────────────────────────────────────── */
 
   {
-    id: 'inter-iiit-esports-qualifiers-2026',
-    title: 'Inter IIIT Esports Qualifiers',
-    date: '29 August 2026',
-    location: 'IIIT Sri City',
-    status: 'past',
+    id: "inter-iiit-esports-qualifiers-2026",
+    title: "Inter IIIT Esports Qualifiers",
+    date: "29 August 2026",
+    location: "IIIT Sri City",
+    status: "past",
     blurb:
-      'We conducted qualifiers for the Inter IIIT Esports Tournament, featuring games like BGMI, Valorant, and Free Fire. Players competed on campus to secure their spot in the main tournament.',
-    image: '/events/DSC_1537.JPG',
+      "We conducted qualifiers for the Inter IIIT Esports Tournament, featuring games like BGMI, Valorant, and Free Fire. Players competed on campus to secure their spot in the main tournament.",
+    image: "/events/DSC_1537.JPG",
     images: [
-      '/events/DSC_1537.JPG',
-      '/events/DSC_1708.JPG',
-      '/events/DSC_1772.JPG',
-      '/events/DSC_1814.JPG',
-      '/events/DSC_1874.JPG',
-      '/events/DSC_1879.JPG',
+      "/events/DSC_1954.JPG.jpeg",
+      "/events/DSC_1537.JPG",
+      "/events/DSC_1708.JPG",
+      "/events/DSC_1772.JPG",
+      "/events/DSC_1814.JPG",
+      "/events/DSC_1874.JPG",
+      "/events/DSC_1879.JPG",
     ],
   },
 
   {
-    id: 'brumble-matiks',
-    title: 'Brumble Matiks',
-    location: 'IIIT Sri City',
-    status: 'past',
+    id: "brumble-matiks",
+    title: "Brumble Matiks",
+    location: "IIIT Sri City",
+    status: "past",
     blurb:
-      'A national inter-collegiate mind-sports league where college teams go head-to-head in competitive brain-training and strategy games.',
-    image: '/events/brumble-matiks.jpeg',
+      "A national inter-collegiate mind-sports league where college teams go head-to-head in competitive brain-training and strategy games.",
+    image: "/events/brumble-matiks.jpeg",
   },
-]
+];
 
 /** The two blocks the section renders, in the order it renders them. */
-export const UPCOMING = EVENTS.filter((event) => event.status === 'upcoming')
-export const PAST = EVENTS.filter((event) => event.status === 'past')
+export const UPCOMING = EVENTS.filter((event) => event.status === "upcoming");
+export const PAST = EVENTS.filter((event) => event.status === "past");
