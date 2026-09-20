@@ -7,24 +7,26 @@ import App from './App'
 import './styles/tokens.css'
 import './styles/global.css'
 
-// A refresh should begin at the designed opening frame. Browser restoration can
-// occur after the module first evaluates, so reset now, on the next frame, and
-// once more at page-show. Explicit hash links remain available for deep links.
+// Force manual scroll restoration so the browser does not jump to previous scroll coordinates on reload
 if ('scrollRestoration' in window.history) {
   window.history.scrollRestoration = 'manual'
 }
 
 const resetInitialScroll = () => {
-  if (!window.location.hash) {
-    window.scrollTo(0, 0)
-    document.documentElement.scrollTop = 0
-    document.body.scrollTop = 0
-  }
+  // Always start at the top (Home section) on every page load/reload.
+  window.scrollTo(0, 0)
 }
 
+// Strip any URL hash so the browser doesn't jump to a mid-page anchor
+// before React mounts and the preloader takes over.
+if (window.location.hash) {
+  history.replaceState(null, '', window.location.pathname + window.location.search)
+}
+
+// Run reset on initialization
 resetInitialScroll()
 requestAnimationFrame(resetInitialScroll)
-window.addEventListener('pageshow', resetInitialScroll, { once: true })
+window.addEventListener('pageshow', resetInitialScroll)
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

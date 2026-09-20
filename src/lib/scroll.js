@@ -55,13 +55,32 @@ export function lockScroll() {
 export function unlockScroll() {
   locked = false
   document.documentElement.style.overflow = ''
-  lenis?.start()
-  // Every ScrollTrigger created during the intro was measured against a
-  // document that could not scroll - `overflow: hidden` on <html> means no
-  // scroll height, so starts and ends resolve against the wrong distance.
-  // Re-measure now that the real page geometry exists, or reveals further
-  // down the page can be left holding their hidden state.
+
+  // Jump to top immediately before refresh so measurements start from 0.
+  window.scrollTo(0, 0)
+  if (lenis) {
+    lenis.scrollTo(0, { immediate: true })
+    lenis.start()
+  }
+
+  // ScrollTrigger.refresh() internally scrolls to measure section positions,
+  // which can leave the page mid-way. Hard-reset to 0 once it is done.
   ScrollTrigger.refresh()
+  window.scrollTo(0, 0)
+  if (lenis) {
+    lenis.scrollTo(0, { immediate: true })
+  }
+
+  // Double rAF: first frame lets the browser apply the reset, second ensures
+  // Lenis has processed it before anything else reads the scroll position.
+  requestAnimationFrame(() => {
+    window.scrollTo(0, 0)
+    lenis?.scrollTo(0, { immediate: true })
+    requestAnimationFrame(() => {
+      window.scrollTo(0, 0)
+      lenis?.scrollTo(0, { immediate: true })
+    })
+  })
 }
 
 export function initSmoothScroll() {
