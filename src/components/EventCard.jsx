@@ -14,8 +14,8 @@
    blue-violet gradient carrying the event's initial.
 
    When `event.images` is an array with 2+ entries the media area becomes a
-   cycling gallery: photos crossfade every 3 s automatically, and the user can
-   also navigate with prev/next arrows or the dot strip at the bottom. */
+   gallery: it cycles only while hovered on devices with a fine pointer. On
+   touch, it stays still until the user uses the visible arrows or dots. */
 import { useState, useEffect, useCallback, useRef } from 'react'
 import Card from './Card'
 import styles from './EventCard.module.css'
@@ -66,7 +66,9 @@ function Gallery({ images }) {
     [images.length],
   )
 
-  /* Auto-cycle */
+  // The timer exists only during a deliberate desktop hover. Running every
+  // gallery all the time causes needless React updates and image fades while
+  // the section is off screen.
   const startTimer = useCallback(() => {
     clearInterval(timerRef.current)
     timerRef.current = setInterval(() => {
@@ -74,38 +76,41 @@ function Gallery({ images }) {
     }, CYCLE_MS)
   }, [images.length])
 
-  useEffect(() => {
-    startTimer()
-    return () => clearInterval(timerRef.current)
-  }, [startTimer])
+  useEffect(() => () => clearInterval(timerRef.current), [])
+
+  const stopTimer = () => clearInterval(timerRef.current)
+
+  const handlePointerEnter = (event) => {
+    if (event.pointerType !== 'touch') startTimer()
+  }
 
   const handlePrev = () => {
     go(active - 1)
-    startTimer()
   }
   const handleNext = () => {
     go(active + 1)
-    startTimer()
   }
   const handleDot = (i) => {
     go(i)
-    startTimer()
   }
 
   return (
-    <div className={styles.gallery} aria-label="Event photo gallery">
-      {/* Stack all images; only the active one is visible */}
-      {images.map((src, i) => (
-        <img
-          key={src}
-          className={styles.galleryImg}
-          data-active={i === active ? 'true' : undefined}
-          src={src}
-          alt={`Event photo ${i + 1}`}
-          loading="lazy"
-          decoding="async"
-        />
-      ))}
+    <div
+      className={styles.gallery}
+      aria-label="Event photo gallery"
+      onPointerEnter={handlePointerEnter}
+      onPointerLeave={stopTimer}
+    >
+      {/* Mount only the selected image. Keeping every camera photo in the DOM
+          makes the browser download and decode the full gallery at once. */}
+      <img
+        className={styles.galleryImg}
+        key={images[active]}
+        src={images[active]}
+        alt={`Event photo ${active + 1}`}
+        loading="lazy"
+        decoding="async"
+      />
 
       {/* Prev / Next */}
       <button
@@ -148,7 +153,7 @@ function Gallery({ images }) {
 
 /* ---- Card ---- */
 
-export default function EventCard({ event }) {
+export default function EventCard({ event, onOpenDetails }) {
   const upcoming = event.status === 'upcoming'
   const hasGallery = Array.isArray(event.images) && event.images.length > 1
 
@@ -186,6 +191,12 @@ export default function EventCard({ event }) {
       <h4 className={styles.title}>{event.title}</h4>
 
       <p className={styles.blurb}>{event.blurb}</p>
+
+      {event.details ? (
+        <button className={styles.recap} onClick={() => onOpenDetails?.(event)}>
+          View event recap <span aria-hidden="true">↗</span>
+        </button>
+      ) : null}
 
       <ul className={styles.footer}>
         {event.date && (
