@@ -21,13 +21,16 @@ export const TIER = {
  */
 const BUDGET = {
   [TIER.HIGH]: {
-    particles: 100000,
+    // The original 260k combined particle budget could dip badly on otherwise
+    // capable integrated GPUs. These counts retain the dense field and core
+    // while leaving enough frame time for smooth scrolling and interaction.
+    particles: 60000,
     // The hero mass runs 12 noise samples per particle for its curl field, so
     // it is far more expensive per-particle than the warp.
-    heroParticles: 160000,
-    debrisCount: 420,
+    heroParticles: 80000,
+    debrisCount: 280,
     // Multiplier on the per-particle depth-of-field bokeh. 0 disables it.
-    bokehScale: 1,
+    bokehScale: 0.75,
     blobDetail: 32,
     bloom: true,
     chromatic: true,
@@ -141,7 +144,9 @@ function detect() {
     memory,
     // Brief: [1, 1.5] on mobile, [1, 2] on desktop. A weak desktop GPU gets the
     // mobile cap too — resolution is the cheapest thing to give up.
-    maxDpr: isMobile || tier === TIER.LOW ? 1.5 : 2,
+    // 1.5x is a strong visual compromise for a full-screen particle scene;
+    // 2x quadruples the pixels of a 1x canvas and is rarely worth the cost.
+    maxDpr: 1.5,
     ...BUDGET[tier],
   }
 }

@@ -11,8 +11,10 @@
    Every cell is [data-reveal-item], so the enclosing <Section> staggers them
    with the same baseline every other section uses. Events has no tiering to
    express, so it gets no bespoke motion. */
+import { useCallback, useState } from 'react'
 import Section from '../components/Section'
 import EventCard from '../components/EventCard'
+import EventDetailsModal from '../components/EventDetailsModal'
 import { PAST, UPCOMING } from '../data/events'
 import { getSection } from './manifest'
 import styles from './Events.module.css'
@@ -40,41 +42,50 @@ function BlockHeading({ children }) {
 }
 
 export default function Events() {
-  return (
-    <Section {...getSection('events')} eyebrow={EYEBROW} blurb={INTRO}>
-      <div className={styles.blocks}>
-        {/* ---- Upcoming ---- */}
-        <div className={styles.block}>
-          <BlockHeading>{UPCOMING_HEADING}</BlockHeading>
+  const [selectedEvent, setSelectedEvent] = useState(null)
+  const closeDetails = useCallback(() => setSelectedEvent(null), [])
 
-          {UPCOMING.length ? (
+  return (
+    <>
+      <Section {...getSection('events')} eyebrow={EYEBROW} blurb={INTRO}>
+        <div className={styles.blocks}>
+          {/* ---- Upcoming ---- */}
+          <div className={styles.block}>
+            <BlockHeading>{UPCOMING_HEADING}</BlockHeading>
+
+            {UPCOMING.length ? (
+              <ul className={styles.grid}>
+                {UPCOMING.map((event) => (
+                  <li key={event.id} className={styles.cell} data-reveal-item>
+                    <EventCard event={event} onOpenDetails={setSelectedEvent} />
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className={styles.empty} data-reveal-item>
+                {EMPTY}
+              </p>
+            )}
+          </div>
+
+          {/* ---- Past ---- */}
+          <div className={styles.block}>
+            <BlockHeading>{PAST_HEADING}</BlockHeading>
+
             <ul className={styles.grid}>
-              {UPCOMING.map((event) => (
+              {PAST.map((event) => (
                 <li key={event.id} className={styles.cell} data-reveal-item>
-                  <EventCard event={event} />
+                  <EventCard event={event} onOpenDetails={setSelectedEvent} />
                 </li>
               ))}
             </ul>
-          ) : (
-            <p className={styles.empty} data-reveal-item>
-              {EMPTY}
-            </p>
-          )}
+          </div>
         </div>
+      </Section>
 
-        {/* ---- Past ---- */}
-        <div className={styles.block}>
-          <BlockHeading>{PAST_HEADING}</BlockHeading>
-
-          <ul className={styles.grid}>
-            {PAST.map((event) => (
-              <li key={event.id} className={styles.cell} data-reveal-item>
-                <EventCard event={event} />
-              </li>
-            ))}
-          </ul>
-        </div>
-      </div>
-    </Section>
+      {selectedEvent ? (
+        <EventDetailsModal event={selectedEvent} onClose={closeDetails} />
+      ) : null}
+    </>
   )
 }
